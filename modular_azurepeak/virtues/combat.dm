@@ -92,9 +92,9 @@
 
 /datum/virtue/combat/militia
 	name = "Militiaman"
-	desc = "I have trained with the local garrison in case I'm ever to be levied to fight for my lord. I have a spear stashed away in the event I'm called to arms."
-	custom_text = "+1 to Maces and Polearms, Up to Journeyman, Minimum Apprentice."
-	added_stashed_items = list("Spear" = /obj/item/rogueweapon/spear)
+	desc = "I have trained with the local garrison in case I'm ever to be levied to fight for my lord. I have a spear  and sling stashed away in the event I'm called to arms."
+	custom_text = "+1 to Maces, Slings and Polearms, Up to Journeyman, Minimum Apprentice."
+	added_stashed_items = list("Spear" = /obj/item/rogueweapon/spear, "Sling" = /obj/item/gun/ballistic/revolver/grenadelauncher/sling, "Bullet Pouch" = /obj/item/quiver/sling)
 
 /datum/virtue/combat/militia/apply_to_human(mob/living/carbon/human/recipient)
 	if(recipient.get_skill_level(/datum/skill/combat/polearms) < SKILL_LEVEL_APPRENTICE)
@@ -105,6 +105,10 @@
 		recipient.adjust_skillrank_up_to(/datum/skill/combat/maces, SKILL_LEVEL_APPRENTICE, silent = TRUE)
 	else
 		recipient.adjust_skillrank_up_to(/datum/skill/combat/maces, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
+	if(recipient.get_skill_level(/datum/skill/combat/slings) < SKILL_LEVEL_APPRENTICE)
+		recipient.adjust_skillrank_up_to(/datum/skill/combat/slings, SKILL_LEVEL_APPRENTICE, silent = TRUE)
+	else
+		recipient.adjust_skillrank_up_to(/datum/skill/combat/slings, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
 
 /datum/virtue/combat/brawler
 	name = "Brawler's Apprentice"
@@ -191,3 +195,12 @@
 		else
 			recipient.mob_biotypes |= MOB_UNDEAD //Undead biotype is already applied by damned vice.
 
+/datum/virtue/combat/vampire
+	name = "Crimson Curse"
+	desc = "The dark gift of vampirism courses through my veins. I thirst for blood, shun the light of day, and possess unnatural resilience and strength. And yet these fools dare call me monster..."
+
+/datum/virtue/combat/vampire/apply_to_human(mob/living/carbon/human/recipient)
+	var/datum/antagonist/vampirelord/lesser/new_antag = new /datum/antagonist/vampirelord/lesser/stray()
+	recipient.mind.add_antag_datum(new_antag)
+	recipient.energy = recipient.max_energy
+	recipient.update_health_hud()
