@@ -1698,6 +1698,16 @@
 	item_state = "naledisash"
 	desc = "A limp piece of fabric traditionally used to fasten bags that are too baggy, but in modern days has become more of a fashion statement than anything."
 
+/obj/item/clothing/cloak/stabard/grenzelmage
+	name = "grenzelhoftian magos mantle"
+	desc = "A fashionable Mantle often worn by Celestial Academy Magos."
+	color = CLOTHING_WHITE
+	detail_color = CLOTHING_WHITE
+	detail_tag = "_spl"
+	icon_state = "guard_hood" // The same as the guard hood however to break it from using the lords colors it has been given its own item path
+	item_state = "guard_hood"
+	body_parts_covered = CHEST
+
 /obj/item/clothing/cloak/wardencloak
 	name = "warden cloak"
 	desc = "A cloak worn by the Wardens of the Scarlet Forests"
