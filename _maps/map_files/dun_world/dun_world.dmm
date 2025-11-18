@@ -21805,6 +21805,7 @@
 /obj/item/ingot/steel,
 /obj/item/ingot/steel,
 /obj/item/ingot/steel,
+/obj/item/ingot/steel,
 /turf/open/floor/rogue/blocks,
 /area/rogue/indoors/town/dwarfin)
 "gaW" = (
@@ -63714,11 +63715,6 @@
 "rBR" = (
 /turf/open/floor/rogue/churchmarble,
 /area/rogue/indoors/shelter)
-"rBY" = (
-/turf/open/floor/rogue/metal{
-	icon_state = "plating2"
-	},
-/area/rogue/indoors/town/dwarfin)
 "rCa" = (
 /turf/closed/mineral/rogue/salt,
 /area/rogue/under/cave)
@@ -78230,6 +78226,7 @@
 /area/rogue/indoors/town/tavern)
 "vyk" = (
 /obj/structure/closet/crate/chest/crate,
+/obj/item/ingot/iron,
 /obj/item/ingot/iron,
 /obj/item/ingot/iron,
 /obj/item/ingot/iron,
@@ -169895,7 +169892,7 @@ vGa
 hse
 vGa
 vGa
-rBY
+qgf
 cgC
 bXm
 urZ

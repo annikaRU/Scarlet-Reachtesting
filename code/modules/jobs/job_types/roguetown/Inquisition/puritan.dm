@@ -123,6 +123,7 @@
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		)
 
+	change_origin(H, /datum/virtue/origin/otava, "Holy order")
 
 /datum/outfit/job/roguetown/puritan/inspector/choose_loadout(mob/living/carbon/human/H)
 	. = ..()
@@ -206,6 +207,8 @@
 		/obj/item/storage/keyring/puritan = 1,
 		/obj/item/paper/inqslip/arrival/inq = 1
 		)
+
+	change_origin(H, /datum/virtue/origin/otava, "Holy order")
 
 /datum/outfit/job/roguetown/puritan/ordinator/choose_loadout(mob/living/carbon/human/H)
 	. = ..()
