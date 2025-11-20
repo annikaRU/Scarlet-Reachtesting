@@ -29,7 +29,7 @@
 	var/chance2hit = 0
 
 	if(check_zone(zone) == zone)	//Are we targeting a big limb or chest?
-		chance2hit += 10
+		chance2hit += 15
 
 	chance2hit += (user.get_skill_level(associated_skill) * 8)
 
@@ -46,9 +46,14 @@
 	if(I)
 		if(I.wlength == WLENGTH_SHORT)
 			chance2hit += 10
+		if(I.item_flags & PEASANT_WEAPON && HAS_TRAIT(user, TRAIT_PEASANTMILITIA))
+			chance2hit += 8 //+1 skill equivalent
 
 	if(user.STAPER > 10)
 		chance2hit += (min((user.STAPER-10)*8, 40))
+
+	if(user.STAPER > 15)
+		chance2hit += (min((user.STAPER-15)*3, 15))
 
 	if(user.STAPER < 10)
 		chance2hit -= ((10-user.STAPER)*10)
@@ -63,22 +68,25 @@
 
 	chance2hit = CLAMP(chance2hit, 5, 93)
 
-	if(prob(chance2hit))
-		return zone
-	else
-		if(prob(chance2hit+(user.STAPER - 10)))
-			if(check_zone(zone) == zone)
-				return zone
-			to_chat(user, span_warning("Accuracy fail! [chance2hit]%"))
-			if(user.STAPER >= 11)
-				if(user.client?.prefs.showrolls)
-					return check_zone(zone)
-			else
-				return BODY_ZONE_CHEST
+	var/precision_roll = FALSE
+	var/accuracy_roll = FALSE
+
+	accuracy_roll = prob(chance2hit)
+	if(accuracy_roll)
+		if(check_zone(zone) == zone)
+			return zone
 		else
-			if(user.client?.prefs.showrolls)
-				to_chat(user, span_warning("Double accuracy fail! [chance2hit]%"))
-			return BODY_ZONE_CHEST
+			precision_roll = prob(chance2hit)
+			if(precision_roll)
+				return zone
+			else
+				if(user.client?.prefs.showrolls)
+					to_chat(user, span_warning("Precision fail! [chance2hit]%"))
+				return check_zone(zone)
+	else
+		if(user.client?.prefs.showrolls)
+			to_chat(user, span_warning("Accuracy fail! [chance2hit]%"))
+		return BODY_ZONE_CHEST		
 
 /mob/proc/get_generic_parry_drain()
 	return 30
@@ -245,6 +253,8 @@
 			else
 				if(used_weapon)
 					defender_skill = H.get_skill_level(used_weapon.associated_skill)
+					if(used_weapon.item_flags & PEASANT_WEAPON && HAS_TRAIT(H, TRAIT_PEASANTMILITIA))
+						prob2defend += 20 //Identical to +1 defender skill
 				else
 					defender_skill = H.get_skill_level(/datum/skill/combat/unarmed)
 				prob2defend += highest_defense
@@ -267,6 +277,8 @@
 						if(mind)
 							finalmod = clamp(spdmod, 0, 30)
 						prob2defend -= finalmod
+					if(intenty.masteritem.item_flags & PEASANT_WEAPON && HAS_TRAIT(U, TRAIT_PEASANTMILITIA))
+						prob2defend -= 20 //Identical to +1 attacker skill
 				else
 					attacker_skill = U.get_skill_level(/datum/skill/combat/unarmed)
 					prob2defend -= (attacker_skill * 20)
