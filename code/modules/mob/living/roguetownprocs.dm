@@ -409,7 +409,6 @@
 						if(used_weapon == offhand)
 							intdam = INTEG_PARRY_DECAY_NOSHARP
 						used_weapon.take_damage(intdam, BRUTE, used_weapon.d_type)
-						used_weapon.remove_bintegrity(SHARPNESS_ONHIT_DECAY, user)
 					return TRUE
 				else
 					return FALSE
