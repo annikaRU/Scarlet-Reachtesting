@@ -210,4 +210,3 @@
 		)
 
 	change_origin(H, /datum/virtue/origin/grenzelhoft)
-	)

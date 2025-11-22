@@ -101,6 +101,7 @@
 		/obj/effect/proc_holder/spell/invoked/projectile/fetch::name 	= /obj/effect/proc_holder/spell/invoked/projectile/fetch,
 		/obj/effect/proc_holder/spell/invoked/aerosolize::name 			= /obj/effect/proc_holder/spell/invoked/aerosolize,
 		/obj/effect/proc_holder/spell/invoked/blink::name 				= /obj/effect/proc_holder/spell/invoked/blink,
+		/obj/effect/proc_holder/spell/invoked/mirror_transform::name	= /obj/effect/proc_holder/spell/invoked/mirror_transform,
 	)
 	var/list/offensive_bundle = list(	//This is not meant to make them combat-capable. A weak offensive, and mostly defensive option.
 		/obj/effect/proc_holder/spell/invoked/projectile/arcynebolt, // PLACEHOLDER
