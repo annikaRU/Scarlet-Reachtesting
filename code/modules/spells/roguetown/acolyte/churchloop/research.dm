@@ -13,11 +13,11 @@
 #define CLERIC_PRICE_PATRON 1
 #endif
 #ifndef CLERIC_PRICE_FOREIGN
-#define CLERIC_PRICE_FOREIGN 3
+#define CLERIC_PRICE_FOREIGN 1
 #endif
 
 #ifndef MIRACLE_MP_PRICE_FLAVOR
-#define MIRACLE_MP_PRICE_FLAVOR 100
+#define MIRACLE_MP_PRICE_FLAVOR 500
 #endif
 #ifndef RESEARCH_RP_PRICE_FLAVOR
 #define RESEARCH_RP_PRICE_FLAVOR 100
@@ -36,7 +36,7 @@
 #define COST_ORG_T2      5
 #endif
 #ifndef COST_ORG_T3
-#define COST_ORG_T3      5
+#define COST_ORG_T3      500
 #endif
 
 #ifndef ORG_PRICE_T1
@@ -566,7 +566,7 @@ var/global/list/PATRON_ARTIFACTS = list(
 		if(rp >= COST_ARTEFACTS)	html += "<a href='?src=[REF(src)];unlock=artefacts'>Unlock ([COST_ARTEFACTS] RP)</a>"
 		else						html += "<span style='color:#7f8c8d'>Unlock ([COST_ARTEFACTS] RP)</span>"
 	else
-		html += "<span style='color:#7f8c8d'>—</span>"
+		html += "<span style='color:#7f8c8d'>-</span>"
 	html += "</td></tr>"
 
 	// Organs slops 
@@ -574,33 +574,33 @@ var/global/list/PATRON_ARTIFACTS = list(
 	if(!H.unlocked_research_org_t1)
 		if(rp >= COST_ORG_T1)	html += "<a href='?src=[REF(src)];unlock=org_t1'>Unlock ([COST_ORG_T1] RP)</a>"
 		else					html += "<span style='color:#7f8c8d'>Unlock ([COST_ORG_T1] RP)</span>"
-	else html += "<span style='color:#7f8c8d'>—</span>"
+	else html += "<span style='color:#7f8c8d'>-</span>"
 	html += "</td></tr>"
 
 	html += "<tr><td>Organs T2</td><td>[status_yn(H.unlocked_research_org_t2)]</td><td align='center'>"
 	if(!H.unlocked_research_org_t2)
 		if(rp >= COST_ORG_T2)	html += "<a href='?src=[REF(src)];unlock=org_t2'>Unlock ([COST_ORG_T2] RP)</a>"
 		else					html += "<span style='color:#7f8c8d'>Unlock ([COST_ORG_T2] RP)</span>"
-	else html += "<span style='color:#7f8c8d'>—</span>"
+	else html += "<span style='color:#7f8c8d'>-</span>"
 	html += "</td></tr>"
 
 	html += "<tr><td>Organs T3</td><td>[status_yn(H.unlocked_research_org_t3)]</td><td align='center'>"
 	if(!H.unlocked_research_org_t3)
 		if(rp >= COST_ORG_T3)	html += "<a href='?src=[REF(src)];unlock=org_t3'>Unlock ([COST_ORG_T3] RP)</a>"
 		else					html += "<span style='color:#7f8c8d'>Unlock ([COST_ORG_T3] RP)</span>"
-	else html += "<span style='color:#7f8c8d'>—</span>"
+	else html += "<span style='color:#7f8c8d'>-</span>"
 	html += "</td></tr>"
 
 	// Unlockshynned
 	var/sh_unl = _shunned_relations_unlocked(H)
-	html += "<tr><td>Shunned Branch (Relations & Learn)</td><td>[status_yn(sh_unl)]</td><td align='center'>"
+	html += "<tr><td>Shunned Knowledges</td><td>[status_yn(sh_unl)]</td><td align='center'>"
 	if(!sh_unl)
 		if(H.personal_research_points >= UNLOCK_SHUNNED_RP)
 			html += "<a href='?src=[REF(src)];unlock_shunned_rel=1'>Unlock ([UNLOCK_SHUNNED_RP] RP)</a>"
 		else
 			html += "<span style='color:#7f8c8d'>Unlock ([UNLOCK_SHUNNED_RP] RP)</span>"
 	else
-		html += "<span style='color:#7f8c8d'>—</span>"
+		html += "<span style='color:#7f8c8d'>-</span>"
 	html += "</td></tr>"
 
 	html += "</table>"
@@ -612,20 +612,24 @@ var/global/list/PATRON_ARTIFACTS = list(
 
 	// + shunned
 	if(_shunned_relations_unlocked(H))
-		nav_bits += (src.current_rel_tab == "shunned") ? "<b>Shunned</b>" : "<a href='?src=[REF(src)];reltab=shunned'>Shunned</a>"
+		nav_bits += (src.current_rel_tab == "shunned") ? "<b>Ascendants</b>" : "<a href='?src=[REF(src)];reltab=shunned'>Shunned</a>"
 	else
-		nav_bits += "<span style='color:#7f8c8d'>Shunned (10 RP)</span>"
+		nav_bits += "<span style='color:#7f8c8d'>A</span>"
 
 	html += "<hr>" + jointext(nav_bits, " | ") + "<br>"
+
+	var/is_templar = _is_templar(H)
+	var/rel_cap = is_templar ? 2 : 4
+	// ***********************************************
 
 	// - Relations content STARTS HERE OH MY GOD I HATE BLANCE
 	if(src.current_rel_tab == "ten" || (src.current_rel_tab == "shunned" && _shunned_relations_unlocked(H)))
 		var/list/idx = (src.current_rel_tab == "shunned") ? inhumen_patrons_index : divine_patrons_index
 		if(idx && idx.len)
 			// 2B or not 2B
-			html += "<br><b>[src.current_rel_tab == "shunned" ? "Shunned" : "Ten"] — Patron Relationships</b><br>"
+			html += "<br><b>[src.current_rel_tab == "shunned" ? "Shunned" : "Ten"] - Patron Relationships</b><br>"
 			html += "<div style='margin:6px 0; padding:8px; background:#222831; border-radius:6px;'>"
-			html += "<div><i>Relation chart (0..4):</i></div>"
+			html += "<div><i>Relation chart (0..[rel_cap]):</i></div>"
 
 			var/list/names_chart = list()
 			for(var/nc in idx) names_chart += "[nc]"
@@ -638,13 +642,14 @@ var/global/list/PATRON_ARTIFACTS = list(
 
 			for(var/gn in names_chart)
 				var/curv = H.patron_relations && (gn in H.patron_relations) ? H.patron_relations[gn] : 0
-				var/perc = round((curv * 100) / 4)
+				if(curv > rel_cap) curv = rel_cap
+				var/perc = round((curv * 100) / rel_cap)
 				if(perc < 0) perc = 0
 				if(perc > 100) perc = 100
 				var/bar_color = (gn == my_patron) ? "#2ecc71" : "#3498db"
 
 				html += "<div style='margin:6px 0;'>"
-				html += "<div style='font-size:12px;color:#ecf0f1;'>[html_attr(gn)] — <b>[curv]</b>/4</div>"
+				html += "<div style='font-size:12px;color:#ecf0f1;'>[html_attr(gn)] - <b>[curv]</b>/[rel_cap]</div>"
 				html += "<div style='background:#2c3e50;height:10px;border-radius:6px;overflow:hidden;'>"
 				html += "<div style='width:[perc]%;height:10px;background:[bar_color];'></div>"
 				html += "</div></div>"
@@ -663,20 +668,22 @@ var/global/list/PATRON_ARTIFACTS = list(
 				var/list/rec = idx[n]
 				var/dom = "[rec["domain"]]"
 				var/cur = H.patron_relations && (n in H.patron_relations) ? H.patron_relations[n] : 0
+				if(cur > rel_cap) cur = rel_cap
 
 				html += "<tr>"
 				html += "<td><b>[html_attr(n)]</b></td>"
 				html += "<td>[html_attr(dom)]</td>"
-				html += "<td align='center'><b>[cur]</b>/4</td>"
+				html += "<td align='center'><b>[cur]</b>/[rel_cap]</td>"
 				html += "<td align='center'>"
 
 				if(H.devotion && H.devotion.patron && ("name" in H.devotion.patron.vars) && ("[H.devotion.patron.vars["name"]]" == n))
 					html += "<span style='color:#2ecc71'>Own patron (max).</span>"
 				else
-					if(cur >= 4)
+					if(cur >= rel_cap)
 						html += "<span style='color:#2ecc71'>Maxed</span>"
 					else
 						var/next = cur + 1
+						if(next > rel_cap) next = rel_cap
 						var/cost = (next == 1) ? 1 : (next == 2) ? 2 : (next == 3) ? 3 : 4
 						var/can = TRUE
 						if(src.current_rel_tab == "shunned" && !_shunned_relations_unlocked(H)) can = FALSE
@@ -992,9 +999,19 @@ var/global/list/PATRON_ARTIFACTS = list(
 
 		var/cur = H.patron_relations[god]
 		if(!isnum(cur)) cur = 0
+
+		// ***** MINIMAL CHANGE: hard cap templar relations at 2 *****
+		if(_is_templar(H) && cur >= 2) { open_research_ui(H); return }
+		// ***********************************************************
+
 		if(cur >= 4) { open_research_ui(H); return }
 
 		var/next = cur + 1
+
+		// ***** MINIMAL CHANGE: block upgrade above 2 for templars *****
+		if(_is_templar(H) && next > 2) { open_research_ui(H); return }
+		// **************************************************************
+
 		var/cost = (next == 1) ? 1 : (next == 2) ? 2 : (next == 3) ? 3 : 4
 		if(H.personal_research_points < cost) { open_research_ui(H); return }
 
@@ -1149,7 +1166,7 @@ var/global/list/PATRON_ARTIFACTS = list(
 		for(var/n in inhumen_patrons_index)
 			if(!(n in H.patron_relations))
 				H.patron_relations[n] = 0
-		to_chat(H, span_notice("Shunned branch unlocked (Relations & Learn)."))
+		to_chat(H, span_notice("Shunned knowledges unlocked."))
 		open_research_ui(H); return
 
 	// --- Upgrade: Diagnose (2 MP) ---
