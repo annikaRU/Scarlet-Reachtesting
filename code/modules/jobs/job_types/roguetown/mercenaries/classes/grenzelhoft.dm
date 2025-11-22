@@ -210,36 +210,4 @@
 		)
 
 	change_origin(H, /datum/virtue/origin/grenzelhoft)
-
-/datum/advclass/mercenary/grenzelhoft/mage
-	name = "Gefechtsgelehrter"
-	tutorial = "You are a Gefechtsgelehrter - \"Combat Scholar\" - A proud magos from the Celestial Academy of Magos, who's skills in Siege Magic and Arcyne Physics are unmatched."
-	allowed_sexes = list(MALE, FEMALE)
-	allowed_races = RACES_ALL_KINDS
-	outfit = /datum/outfit/job/roguetown/mercenary/grenzelhoft_mage
-	class_select_category = CLASS_CAT_GRENZELHOFT
-	category_tags = list(CTAG_MERCENARY)
-	cmode_music = 'sound/music/combat_grenzelhoft.ogg'
-	subclass_languages = list(/datum/language/grenzelhoftian)
-	traits_applied = list(TRAIT_MAGEARMOR, TRAIT_INTELLECTUAL, TRAIT_STEELHEARTED)
-	subclass_stats = list(
-		STATKEY_INT = 3,
-		STATKEY_STR = -1,
-		STATKEY_PER = 3,
-		STATKEY_SPD = 1
-	)
-	subclass_skills = list(
-		/datum/skill/magic/arcane = SKILL_LEVEL_JOURNEYMAN,
-		/datum/skill/combat/polearms = SKILL_LEVEL_JOURNEYMAN,
-		/datum/skill/combat/wrestling = SKILL_LEVEL_APPRENTICE,
-		/datum/skill/combat/unarmed = SKILL_LEVEL_APPRENTICE,
-		/datum/skill/misc/athletics = SKILL_LEVEL_APPRENTICE,
-		/datum/skill/misc/climbing = SKILL_LEVEL_JOURNEYMAN,
-		/datum/skill/misc/medicine = SKILL_LEVEL_NOVICE,
-		/datum/skill/misc/reading = SKILL_LEVEL_MASTER,
-		/datum/skill/misc/riding = SKILL_LEVEL_NOVICE,
-		/datum/skill/misc/sneaking = SKILL_LEVEL_APPRENTICE,
-		/datum/skill/misc/swimming = SKILL_LEVEL_NOVICE,
-		/datum/skill/craft/crafting = SKILL_LEVEL_NOVICE,
-		/datum/skill/craft/alchemy = SKILL_LEVEL_APPRENTICE,
 	)
