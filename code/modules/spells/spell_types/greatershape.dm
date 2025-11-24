@@ -22,7 +22,7 @@
 
 /obj/effect/proc_holder/spell/targeted/shapeshift/mireboi
 	name = "Crawler Form"
-	desc = "A rare form, usually only deep Druids have access to it, they, however may choose to lend it to others"
+	desc = "Rare power bestowed by Druids from the manic depths of Dendor's domain, used to take the form of an agile arachnoid critter."
 	invocation = ""
 	overlay_state = "tamebeast"
 	human_req = FALSE
