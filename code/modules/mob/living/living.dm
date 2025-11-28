@@ -61,6 +61,7 @@
 	if(!isgroundlessturf(T))
 		playsound(src.loc, 'sound/foley/zfall.ogg', 100, FALSE)
 		ZImpactDamage(T, levels)
+		drop_all_held_items()
 		record_round_statistic(STATS_MOAT_FALLERS)// Wouldn't this only count if you DIDN'T fall in the moat?
 	return ..()
 
