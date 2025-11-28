@@ -1025,6 +1025,15 @@
 
 	return inquisition_text
 
+// Heartfelt examine
+
+/mob/living/proc/get_heartfelt_text(mob/examiner)
+	var/heartfelt_text
+	if(HAS_TRAIT(src, TRAIT_HEARTFELT) && HAS_TRAIT(examiner, TRAIT_HEARTFELT))
+		heartfelt_text = "They serve the interests of Heartfelt."
+
+	return heartfelt_text
+
 /// Returns antagonist-related examine text for the mob, if any. Can return null.
 /mob/living/proc/get_villain_text(mob/examiner)
 	var/villain_text
