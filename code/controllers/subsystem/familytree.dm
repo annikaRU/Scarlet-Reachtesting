@@ -464,6 +464,8 @@ SUBSYSTEM_DEF(familytree)
 							continue
 						if((member.person.xenophobe == 2 || H.xenophobe == 2) && member.person.dna.species.sub_name != our_subrace)
 							continue
+						if(member.person.familytree_pref == FAMILY_PARTIAL)
+							continue
 						if(member.person.mind?.assigned_role in nomarry_jobs)
 							continue
 						if(ok_gender_H && ok_gender_M && abs(H.social_rank - member.person.social_rank) <= 1)
