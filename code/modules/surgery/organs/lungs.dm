@@ -78,13 +78,13 @@
 	..()
 	if(M)
 		M.apply_status_effect(/datum/status_effect/buff/t1lungs)
-		ADD_TRAIT(M, TRAIT_WATERBREATHING, TRAIT_ORGAN)
+		ADD_TRAIT(M, TRAIT_WATERBREATHING, ORGAN_TRAIT)
 
 /obj/item/organ/lungs/t1/Remove(mob/living/carbon/M, special = 0)
 	..()
 	if(M.has_status_effect(/datum/status_effect/buff/t1lungs))
 		M.remove_status_effect(/datum/status_effect/buff/t1lungs)
-		REMOVE_TRAIT(M, TRAIT_WATERBREATHING , TRAIT_ORGAN)
+		REMOVE_TRAIT(M, TRAIT_WATERBREATHING , ORGAN_TRAIT)
 
 /datum/status_effect/buff/t2lungs
 	id = "t2lungs"
@@ -98,18 +98,18 @@
 	..()
 	if(M)
 		M.apply_status_effect(/datum/status_effect/buff/t2lungs)
-		ADD_TRAIT(M, TRAIT_BREADY, TRAIT_ORGAN)
-		ADD_TRAIT(M, TRAIT_ZJUMP, TRAIT_ORGAN)
-		ADD_TRAIT(M, TRAIT_WATERBREATHING, TRAIT_ORGAN)
+		ADD_TRAIT(M, TRAIT_BREADY, ORGAN_TRAIT)
+		ADD_TRAIT(M, TRAIT_ZJUMP, ORGAN_TRAIT)
+		ADD_TRAIT(M, TRAIT_WATERBREATHING, ORGAN_TRAIT)
 
 
 /obj/item/organ/lungs/t2/Remove(mob/living/carbon/M, special = 0)
 	..()
 	if(M.has_status_effect(/datum/status_effect/buff/t2lungs))
 		M.remove_status_effect(/datum/status_effect/buff/t2lungs)
-		REMOVE_TRAIT(M, TRAIT_BREADY , TRAIT_ORGAN)
-		REMOVE_TRAIT(M, TRAIT_ZJUMP , TRAIT_ORGAN)
-		REMOVE_TRAIT(M, TRAIT_WATERBREATHING , TRAIT_ORGAN)
+		REMOVE_TRAIT(M, TRAIT_BREADY , ORGAN_TRAIT)
+		REMOVE_TRAIT(M, TRAIT_ZJUMP , ORGAN_TRAIT)
+		REMOVE_TRAIT(M, TRAIT_WATERBREATHING , ORGAN_TRAIT)
 
 
 /datum/status_effect/buff/t3lungs
@@ -125,19 +125,19 @@
 	..()
 	if(M)
 		M.apply_status_effect(/datum/status_effect/buff/t3lungs)
-		ADD_TRAIT(M, TRAIT_BREADY, TRAIT_ORGAN)
-		ADD_TRAIT(M, TRAIT_LEAPER, TRAIT_ORGAN)
-		ADD_TRAIT(M, TRAIT_ZJUMP, TRAIT_ORGAN)
-		ADD_TRAIT(M, TRAIT_NOBREATH, TRAIT_ORGAN)
-		ADD_TRAIT(M, TRAIT_LONGSTRIDER, TRAIT_ORGAN)
+		ADD_TRAIT(M, TRAIT_BREADY, ORGAN_TRAIT)
+		ADD_TRAIT(M, TRAIT_LEAPER, ORGAN_TRAIT)
+		ADD_TRAIT(M, TRAIT_ZJUMP, ORGAN_TRAIT)
+		ADD_TRAIT(M, TRAIT_NOBREATH, ORGAN_TRAIT)
+		ADD_TRAIT(M, TRAIT_LONGSTRIDER, ORGAN_TRAIT)
 
 
 /obj/item/organ/lungs/t3/Remove(mob/living/carbon/M, special = 0)
 	..()
 	if(M.has_status_effect(/datum/status_effect/buff/t3lungs))
 		M.remove_status_effect(/datum/status_effect/buff/t3lungs)
-		REMOVE_TRAIT(M, TRAIT_BREADY, TRAIT_ORGAN)
-		REMOVE_TRAIT(M, TRAIT_LEAPER, TRAIT_ORGAN)
-		REMOVE_TRAIT(M, TRAIT_ZJUMP, TRAIT_ORGAN)
-		REMOVE_TRAIT(M, TRAIT_NOBREATH, TRAIT_ORGAN)
-		REMOVE_TRAIT(M, TRAIT_LONGSTRIDER, TRAIT_ORGAN)	
+		REMOVE_TRAIT(M, TRAIT_BREADY, ORGAN_TRAIT)
+		REMOVE_TRAIT(M, TRAIT_LEAPER, ORGAN_TRAIT)
+		REMOVE_TRAIT(M, TRAIT_ZJUMP, ORGAN_TRAIT)
+		REMOVE_TRAIT(M, TRAIT_NOBREATH, ORGAN_TRAIT)
+		REMOVE_TRAIT(M, TRAIT_LONGSTRIDER, ORGAN_TRAIT)	

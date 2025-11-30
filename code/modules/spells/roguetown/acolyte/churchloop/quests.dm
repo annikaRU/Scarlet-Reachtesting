@@ -94,6 +94,16 @@
 
 	return FALSE
 
+proc/_rt_effect_type_name(T)
+	if(!ispath(T, /datum/status_effect))
+		return "[T]"
+	var/datum/status_effect/E = new T
+	var/n = "[T]"
+	if(E && ("id" in E.vars) && istext(E.vars["id"]) && length(E.vars["id"]))
+		n = "[E.vars["id"]]"
+	if(E) qdel(E)
+	return capitalize(n)
+
 /proc/_safe_has_skill_expert(H, skill_type)
 	if(!istype(H, /mob/living/carbon/human)) return FALSE
 	if(!ispath(skill_type, /datum/skill)) return FALSE
@@ -524,6 +534,8 @@
 // QUEST MY TOKENS
 // ---------------------------------------------------------------------
 
+/*
+
 // 1) Enemy of the Faith NOT BLACK OACK
 /obj/item/quest_token/antag_find
 	name = "insight sigil"
@@ -560,6 +572,8 @@
 
 	qdel(src)
 
+
+*/
 
 // 2) Find Expertise
 /obj/item/quest_token/skill_bless
@@ -942,32 +956,60 @@
 
 
 // 9) Witness the Sermon
+
 /obj/item/quest_token/sermon_witness
-	name = "sermon witness"
-	desc = "Confirm the target bears the 'sermon' blessing."
+	name = "pharmacology probe"
+	desc = "Record the reaction: the target must bear an allowed effect."
 	icon_state = "questflaw"
 
+	var/list/required_effect_types = list(
+		/datum/status_effect/buff/sermon,        
+		/datum/status_effect/buff/drunk,
+		/datum/status_effect/buff/foodbuff,
+		/datum/status_effect/buff/ozium,
+		/datum/status_effect/buff/moondust,
+		/datum/status_effect/buff/moondust_purest,
+		/datum/status_effect/buff/starsugar,
+		/datum/status_effect/buff/weed
+	)
+
 /obj/item/quest_token/sermon_witness/attack(target, user)
-	if(!istype(target, /mob/living/carbon/human)) return ..()
-	if(!_ensure_attacker(user)) return
+	if(!istype(target, /mob/living/carbon/human))
+		return ..()
+	if(!_ensure_attacker(user))
+		return
 
 	var/mob/living/carbon/human/H = target
-	if(!_ensure_target_player(H, user)) return
+	if(!_ensure_target_player(H, user))
+		return
 
 	if(_has_quest_lock(H))
 		to_chat(user, span_warning("They’ve already answered the call - stand down and let the clock run."))
 		return
 
-	if(!H.has_status_effect(/datum/status_effect/buff/sermon))
-		to_chat(user, span_warning("They are not inspired by a sermon."))
+	if(!islist(required_effect_types) || !required_effect_types.len)
+		to_chat(user, span_warning("This token is misconfigured. (no effect list set)"))
 		return
 
-	if(!do_after(user, 10 SECONDS, H)) return
+	var/matched = FALSE
+	for(var/T in required_effect_types)
+		if(ispath(T, /datum/status_effect))
+			if(H.has_status_effect(T))
+				matched = TRUE
+				break
+
+	if(!matched)
+		to_chat(user, span_warning("They do not bear any of the required effects."))
+		return
+
+	if(!do_after(user, 10 SECONDS, H))
+		return
 
 	_apply_parish_boon(H)
 	_apply_quest_lock(H)
 	_payout(reward_amount)
 	qdel(src)
+
 
 
 // 10) Researchment of Addiction
@@ -1078,20 +1120,20 @@
 
 	var/list/diff_generic = list(
 		"easy"   = list("count" = 5, "reward" = 100),
-		"medium" = list("count" = 3, "reward" = 200),
-		"hard"   = list("count" = 1, "reward" = 300)
+		"medium" = list("count" = 3, "reward" = 150),
+		"hard"   = list("count" = 1, "reward" = 200)
 	)
 
 	var/list/diff_tithe = list(
 		"easy"   = list("required_sum" = 100, "reward" = 100),
-		"medium" = list("required_sum" = 250, "reward" = 200),
-		"hard"   = list("required_sum" = 500, "reward" = 300)
+		"medium" = list("required_sum" = 250, "reward" = 150),
+		"hard"   = list("required_sum" = 500, "reward" = 200)
 	)
 
 	var/list/diff_antag = list(
 		"easy"   = list("tiers" = list(1), "reward" = 100),
-		"medium" = list("tiers" = list(2), "reward" = 200),
-		"hard"   = list("tiers" = list(3), "reward" = 300)
+		"medium" = list("tiers" = list(2), "reward" = 150),
+		"hard"   = list("tiers" = list(3), "reward" = 200)
 	)
 
 	//---------------------------------------------------
@@ -1356,28 +1398,37 @@
 		))
 
 	//---------------------------------------------------
-	// 9) sermon_witness
+	// 9) sermon_witness aka Record the Reaction
 
 	var/list/witness_diffs = list()
 	for(var/dn9 in diff_generic)
 		var/list/D9 = diff_generic[dn9]
 		var/rew9    = D9["reward"]
+		var/cn9     = ( "count" in D9 ? D9["count"] : 1 )
+
+		var/list/pool   = (islist(Q_WITNESS_EFFECTS) && Q_WITNESS_EFFECTS.len) ? Q_WITNESS_EFFECTS : list(/datum/status_effect/buff/sermon)
+		var/list/picked = _rt_pick_unique(pool, max(1, cn9))
+
+		var/list/names = list()
+		for(var/T in picked)
+			names += html_attr(_rt_effect_type_name(T))
+
+		var/desc_txt = "Confirm the target bears ANY of: [jointext(names, \", \")]."
 
 		witness_diffs[dn9] = list(
 			"diff"       = dn9,
-			"desc"       = "Confirm the target bears the 'sermon' blessing.",
+			"desc" = "Record the reaction: target must bear ANY of: [effects_desc_txt].",
 			"reward"     = rew9,
 			"token_path" = /obj/item/quest_token/sermon_witness,
-			"params"     = list(),
+			"params"     = list("required_effect_types" = picked),
 			"spawned"    = FALSE
 		)
 
 	archetypes += list(list(
 		"kind"          = "sermon_witness",
-		"title"         = "Witness the Sermon",
+		"title"         = "Record the Reaction",
 		"accepted_diff" = "",
 		"difficulties"  = witness_diffs
-	))
 
 	//---------------------------------------------------
 	// 10) flaw_aid

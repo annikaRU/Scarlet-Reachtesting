@@ -85,13 +85,13 @@ var/global/inhumen_patrons_built = FALSE
 
 var/global/list/PATRON_ARTIFACTS = list(
 	"Astrata" = list(/obj/item/artifact/astrata_star),
-	"Noc"     = list(/obj/item/artefact/noc_phylactery),
+/*	"Noc"     = list(/obj/item/artefact/noc_phylactery), */
 	"Dendor"  = list(/obj/item/artefact/dendor_hose),
 	"Abyssor" = list(/obj/item/fishingrod/abyssoid),
 	"Ravox"   = list(/obj/item/artifact/ravox_lens),
 	"Necra"   = list(/obj/item/artefact/necra_censer),
-	"Xylix"   = list(/obj/item/clothing/gloves/xylix),
-	"Pestra"  = list(/obj/item/rogueweapon/surgery/multitool),
+/*	"Xylix"   = list(/obj/item/clothing/gloves/xylix), */
+	"Pestra"  = list(/obj/item/rogueweapon/surgery/multitool, /obj/item/needle/pestra, /obj/item/natural/worms/leech/cheele),
 	"Malum"   = list(/obj/item/rogueweapon/hammer/artefact/malum),
 	"Eora"    = list(/obj/item/artefact/eora_heart),
 )
@@ -614,7 +614,7 @@ var/global/list/PATRON_ARTIFACTS = list(
 	if(_shunned_relations_unlocked(H))
 		nav_bits += (src.current_rel_tab == "shunned") ? "<b>Ascendants</b>" : "<a href='?src=[REF(src)];reltab=shunned'>Shunned</a>"
 	else
-		nav_bits += "<span style='color:#7f8c8d'>A</span>"
+		nav_bits += "<span style='color:#7f8c8d'>Ascendants</span>"
 
 	html += "<hr>" + jointext(nav_bits, " | ") + "<br>"
 
@@ -1169,10 +1169,10 @@ var/global/list/PATRON_ARTIFACTS = list(
 		to_chat(H, span_notice("Shunned knowledges unlocked."))
 		open_research_ui(H); return
 
-	// --- Upgrade: Diagnose (2 MP) ---
+	// --- Upgrade: Diagnose (1 MP) ---
 	if(href_list["upgrade_diag"])
 		if(!istype(H) || !H?.mind) { open_upgrade_ui(H); return }
-		if(H.miracle_points < 2) { to_chat(H, span_warning("Not enough Miracle Points.")); open_upgrade_ui(H); return }
+		if(H.miracle_points < 1) { to_chat(H, span_warning("Not enough Miracle Points.")); open_upgrade_ui(H); return }
 		var/obj/effect/proc_holder/spell/baseS = null
 		var/obj/effect/proc_holder/spell/greaterS = null
 		for(var/obj/effect/proc_holder/spell/S in H.mind.spell_list)
@@ -1184,8 +1184,8 @@ var/global/list/PATRON_ARTIFACTS = list(
 		else qdel(baseS)
 		var/obj/effect/proc_holder/spell/invoked/diagnose/greater/N = new
 		H.mind.AddSpell(N)
-		H.miracle_points = max(0, H.miracle_points - 2)
-		to_chat(H, span_notice("Your Diagnose has been upgraded to Greater Diagnose (-2 MP)."))
+		H.miracle_points = max(0, H.miracle_points - 1)
+		to_chat(H, span_notice("Your Diagnose has been upgraded to Greater Diagnose (-1 MP)."))
 		open_upgrade_ui(H); return
 
 // DONT CHANGE IT PLEASE1111
