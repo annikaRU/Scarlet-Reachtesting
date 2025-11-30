@@ -1,6 +1,6 @@
 /datum/advclass/ogre/dumdum
 	name = "Dum Dum" 
-	tutorial = "Me no Dum Dum, you Dum Dum. Dum Dum kill that bum!"
+	tutorial = " You left Gronn because you could not find enough to eat there, and mean men kept firing arrows at you! Now you are here, and you are hungry. Time to find food!"
 	allowed_sexes = list(MALE) // sorry ladies
 	allowed_races = /datum/species/ogre
 	outfit = /datum/outfit/job/roguetown/ogre/dumdum
@@ -31,7 +31,7 @@
 /datum/outfit/job/roguetown/ogre/dumdum/pre_equip(mob/living/carbon/human/H)
 	..()
 	if(H.mind)
-		to_chat(H, span_warning("Me no Dum Dum, you Dum Dum. Dum Dum kill that bum!"))
+		to_chat(H, span_warning("You no Dum Dum, me Dum Dum. Dum Dum kill that bum-bum!"))
 		shoes = /obj/item/clothing/shoes/roguetown/armor/ogre
 		neck = /obj/item/storage/belt/rogue/pouch/coins/poor
 		pants = /obj/item/clothing/under/roguetown/chainlegs/ogre

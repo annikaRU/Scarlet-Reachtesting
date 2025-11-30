@@ -55,7 +55,7 @@
 
 /obj/effect/proc_holder/spell/self/convertrole/warlord
 	name = "Recruit Follower"
-	new_role = "Grabber"
+	new_role = "Warlord's Recruit"
 	overlay_state = "recruit_templar"
 	recruitment_faction = "War Party"
 	recruitment_message = "EAT WITH ME, %RECRUIT!"
