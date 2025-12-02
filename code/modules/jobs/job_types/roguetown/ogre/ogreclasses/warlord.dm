@@ -25,11 +25,10 @@
 		/datum/skill/misc/climbing = SKILL_LEVEL_APPRENTICE,
 	) //trust me this'll be fine - they'll only have a cuirass and a hauberk for armor i swear
 
-	spells = list(/obj/effect/proc_holder/spell/self/convertrole/warlord)
-
 /datum/outfit/job/roguetown/ogre/warlord/pre_equip(mob/living/carbon/human/H)
 	..()
 	if(H.mind)
+		H.mind.AddSpell(new /obj/effect/proc_holder/spell/self/convertrole/warlord)
 		to_chat(H, span_warning("A great war horn sounds from the bog land, the call of war from a monster of noble blood."))
 		shoes = /obj/item/clothing/shoes/roguetown/armor/ogre
 		shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/ogre
