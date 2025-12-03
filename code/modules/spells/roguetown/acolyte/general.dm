@@ -6,7 +6,7 @@
 	releasedrain = 30
 	chargedrain = 0
 	chargetime = 0
-	range = 4
+	range = 7
 	warnie = "sydwarning"
 	movement_interrupt = FALSE
 	sound = 'sound/magic/heal.ogg'
@@ -48,11 +48,21 @@
 
 	return most_damaged_limb
 
-/obj/effect/proc_holder/spell/invoked/lesser_heal/proc/range_check(mob/living/user, mob/living/target)
-	// we can only miracle someone if we're adjacent to them. can overload this for T4 versions, etc
-	if (target != user && !user.Adjacent(target))
+/obj/effect/proc_holder/spell/invoked/lesser_heal/proc/range_check(mob/living/carbon/human/user, mob/living/target)
+	// we can only miracle someone if we're adjacent to them, unless we're a t4 cleric
+	if (target == user) // we can always lay hands on ourself
+		return TRUE
+
+	if (user.devotion?.level == CLERIC_T4)
+		if (get_dist(user, target) >= range)
+			to_chat(user, span_warning("I need to be closer to them to call forth a healing miracle!"))
+			return FALSE
+		return TRUE
+	
+	if (!user.Adjacent(target))
 		to_chat(user, span_warning("I need to be beside them to perform miraculous healing!"))
 		return FALSE
+	
 	return TRUE	
 
 /obj/effect/proc_holder/spell/invoked/lesser_heal/proc/can_heal(mob/living/user, mob/living/target)
@@ -151,9 +161,14 @@
 		// perform all of our pre-heal checks inside can_heal, including revert_casts, if needed
 		if (!can_heal(user, target))
 			return FALSE
-
+		
 		if (target != user)
-			user.visible_message(span_notice("[user] lays their hands upon [target], willing flesh and bone to mend..."))
+			if (H.devotion?.level == CLERIC_T4)
+				user.visible_message(span_notice("[user] gestures towards [target] with a whispered prayer!"))
+			else
+				user.visible_message(span_notice("[user] lays their hands upon [target], willing flesh and bone to mend..."))
+
+			var/datum/beam/healing_beam = user.Beam(target, icon_state="medbeam", time=5 MINUTES)
 			apply_healing(target, user, get_situational_bonus(user, target))
 			playsound(target, 'sound/magic/heal.ogg', 100)
 			while (do_after(user, 10.5 SECONDS, target = target))
@@ -164,10 +179,14 @@
 						H.devotion?.update_devotion(-devotion_cost)
 						to_chat(user, "<font color='purple'>I lose [devotion_cost] devotion!</font>")
 					else
+						healing_beam.End()
 						return FALSE
 				else
 					to_chat(user, span_warning("My devotion runs dry - I can call upon [user.patron.name] no further for the moment!"))
+					healing_beam.End()
 					return FALSE
+
+			healing_beam.End()
 			return FALSE
 		else
 			user.visible_message(span_info("[user] quickly lays their hands upon themselves!"))
