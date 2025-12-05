@@ -82,7 +82,7 @@
 				placetext = " In the Mountains!"
 			if("mt decapitation")
 				placetext = " from Mt Decapitation!"
-			if("azure basin")
+			if("black basin")
 				placetext = " in the The Black Basin!"
 			if("wilderness")
 				placetext = " in the The Scarlet Grove!"
@@ -120,10 +120,11 @@
 
 				
 
+
+//used for the unique warden horn, port from Azure Peak
+//This needs to be made into a subtype of the main horn, I was just too lazy to get it working for now. 
 #define WARDEN_AMBUSH_MIN 2
 #define WARDEN_AMBUSH_MAX 9
-//used for the unique warden horn, port from Azure Peak
-//Honestly this might be able to be a subtype of the main horn but I don't want to break anything. I'll test merging the two later.
 
 /obj/item/warden_horn
 	name = "warden horn"
@@ -160,9 +161,9 @@
 	if(do_after(user, 30 SECONDS)) // Enough time for any antag to kick or interrupt third party, me think
 		TR.last_induced_ambush_time = world.time
 		user.Immobilize(30) // A very crude solution to kill any solo gamer
-		sound_horn(user)
+		warden_sound_horn(user)
 
-/obj/item/warden_horn/proc/sound_horn(mob/living/user)
+/obj/item/warden_horn/proc/warden_sound_horn(mob/living/user)
 	user.visible_message(span_userdanger("[user] blows the horn!"))
 	switch(user.job)
 		if("Warden")
@@ -173,7 +174,7 @@
 			playsound(src, 'modular_hearthstone/sound/items/rghorn.ogg', 100, TRUE)
 		else
 			playsound(src, 'modular_hearthstone/sound/items/signalhorn.ogg', 100, TRUE)
-		for(var/mob/living/player in GLOB.player_list)
+	for(var/mob/living/player in GLOB.player_list)
 		if(player.stat == DEAD)
 			continue
 		if(isbrain(player))
@@ -213,6 +214,12 @@
 			else
 				player.playsound_local(get_turf(player), 'modular_hearthstone/sound/items/signalhorn.ogg', 35, FALSE, pressure_affected = FALSE)
 		to_chat(player, span_warning("I hear the horn of the Wardens somewhere [dirtext]"))
+
 	var/random_ambushes = 4 + rand(0,2) // 4 - 6 ambushes
+	var/did_ambush = FALSE
 	for(var/i = 0, i < random_ambushes, i++)
-		user.consider_ambush(TRUE, TRUE, min_dist = WARDEN_AMBUSH_MIN, max_dist = WARDEN_AMBUSH_MAX)
+		var/silent = (i != 0)
+		var/success = user.consider_ambush(TRUE, TRUE, min_dist = WARDEN_AMBUSH_MIN, max_dist = WARDEN_AMBUSH_MAX, silent = silent)
+		if(success)
+			did_ambush = TRUE
+	return did_ambush

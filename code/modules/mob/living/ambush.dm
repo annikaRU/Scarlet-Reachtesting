@@ -1,24 +1,27 @@
 GLOBAL_VAR_INIT(ambush_chance_pct, 20) // Please don't raise this over 100 admins :')
 GLOBAL_VAR_INIT(ambush_mobconsider_cooldown, 2 MINUTES) // Cooldown for each individual mob being considered for an ambush
+// Instead of setting it on area and hoping no one forgets it on area we're just doing this
 
 /mob/living/proc/ambushable()
 	if(stat)
 		return FALSE
 	return ambushable
 
-/mob/living/proc/consider_ambush(always = FALSE)
+/mob/living/proc/consider_ambush(always = FALSE, ignore_cooldown = FALSE, min_dist = 1, max_dist = 7, silent = FALSE)
 	var/area/AR = get_area(src)
 	var/datum/threat_region/TR = SSregionthreat.get_region(AR.threat_region)
 	var/danger_level = DANGER_LEVEL_MODERATE // Fallback if there's no region
+	if(!AR.ambush_mobs)
+		return FALSE
 	if(TR)
 		danger_level = TR.get_danger_level()
 	if(danger_level == DANGER_LEVEL_SAFE)
 		if(TR.latent_ambush == 0)
-			return
+			return FALSE
 		if(TR.latent_ambush <= DANGER_SAFE_LIMIT && !always) // Signal horn can dip below 10
-			return
-	if(TR && ((world.time - TR.last_natural_ambush_time + 1 MINUTES) < 1 MINUTES))
-		return
+			return FALSE
+	if(TR && !(always && ignore_cooldown) && ((world.time - TR.last_natural_ambush_time) < 2 MINUTES))
+		return FALSE
 	var/true_ambush_chance = GLOB.ambush_chance_pct
 	if(TR)
 		if(danger_level == DANGER_LEVEL_LOW)
@@ -28,19 +31,17 @@ GLOBAL_VAR_INIT(ambush_mobconsider_cooldown, 2 MINUTES) // Cooldown for each ind
 		else if(danger_level == DANGER_LEVEL_BLEAK)
 			true_ambush_chance *= 2
 	if(!always && prob(100 - true_ambush_chance))
-		return
-	if(prob(100 - GLOB.ambush_chance_pct))
-		return
+		return FALSE
 	if(!always)
 		if(HAS_TRAIT(src, TRAIT_REACHNATIVE))
-			return
+			return FALSE
 		if(world.time > last_client_interact + 0.3 SECONDS)
-			return // unmoving afks can't trigger random ambushes i.e. when being pulled/kicked/etc
-	if(get_will_block_ambush(src))
-		return
+			return FALSE // unmoving afks can't trigger random ambushes i.e. when being pulled/kicked/etc
+	if(get_will_block_ambush())
+		return FALSE
 	if(mob_timers["ambush_check"] && !ignore_cooldown)
 		if(world.time < mob_timers["ambush_check"] + GLOB.ambush_mobconsider_cooldown)
-			return
+			return FALSE
 	mob_timers["ambush_check"] = world.time
 	var/victims = 1
 	var/list/victimsa = list()
@@ -57,7 +58,8 @@ GLOBAL_VAR_INIT(ambush_mobconsider_cooldown, 2 MINUTES) // Cooldown for each ind
 		for(var/mob/living/V in victimsa)
 			V.mob_timers["ambushlast"] = world.time
 		if(TR)
-			TR.reduce_latent_ambush(1) // Remove one ambush from the ambient pool
+			var/scaled_reduction = TR.latent_ambush > DANGER_MODERATE_LIMIT ? 2 : 1 // Dangerous & Dire counts for 2
+			TR.reduce_latent_ambush(scaled_reduction) // Remove one ambush from the ambient pool
 			TR.last_natural_ambush_time = world.time
 		var/list/mobs_to_spawn = list()
 		var/mobs_to_spawn_single = FALSE
@@ -65,7 +67,6 @@ GLOBAL_VAR_INIT(ambush_mobconsider_cooldown, 2 MINUTES) // Cooldown for each ind
 		var/mustype = 1
 		var/spawnedtype = pickweight(AR.ambush_mobs)
 
-		//Azure Peak ports, original PR by FreeStylaLT
 		// This is the part where we scale ambush difficulty based on threat. Due to how we have a mix of
 		// Ambush Config and Single Mob Ambush, I use a weird scaling system:
 		// Single Mob
@@ -79,7 +80,6 @@ GLOBAL_VAR_INIT(ambush_mobconsider_cooldown, 2 MINUTES) // Cooldown for each ind
 		// Dire = + 2 Mobs
 		// Previous ambush system is 2 mobs, unless there's 3 victims, in which 3 mobs
 		// And Ambush Config number is fixed
-	
 
 		if(ispath(spawnedtype, /mob/living))
 			switch(danger_level)
@@ -138,14 +138,17 @@ GLOBAL_VAR_INIT(ambush_mobconsider_cooldown, 2 MINUTES) // Cooldown for each ind
 					var/mob/living/carbon/human/H = spawnedmob
 					H.del_on_deaggro = 44 SECONDS
 					H.last_aggro_loss = world.time
+					H.faction += "ambush"
 					H.retaliate(src)
 					mustype = 2
-		if(mustype == 1)
-			playsound_local(src, pick('sound/misc/jumpscare (1).ogg','sound/misc/jumpscare (2).ogg','sound/misc/jumpscare (3).ogg','sound/misc/jumpscare (4).ogg'), 100)
-		else
-			playsound_local(src, pick('sound/misc/jumphumans (1).ogg','sound/misc/jumphumans (2).ogg','sound/misc/jumphumans (3).ogg'), 100)
-		shake_camera(src, 2, 2)
-		
+		if(!silent)
+			if(mustype == 1)
+				playsound_local(src, pick('sound/misc/jumpscare (1).ogg','sound/misc/jumpscare (2).ogg','sound/misc/jumpscare (3).ogg','sound/misc/jumpscare (4).ogg'), 100)
+			else
+				playsound_local(src, pick('sound/misc/jumphumans (1).ogg','sound/misc/jumphumans (2).ogg','sound/misc/jumphumans (3).ogg'), 100)
+			shake_camera(src, 2, 2)
+		return TURF_WET_PERMAFROST
+
 // Return whether a mob is blocked from being ambushed
 /mob/living/proc/get_will_block_ambush()
 	if(!ambushable())
@@ -177,3 +180,11 @@ GLOBAL_VAR_INIT(ambush_mobconsider_cooldown, 2 MINUTES) // Cooldown for each ind
 			possible_targets += get_adjacent_ambush_turfs(RS.loc)
 
 	return possible_targets
+
+/proc/get_adjacent_ambush_turfs(turf/T)
+	var/list/adjacent = list()
+	for(var/turf/AT in get_adjacent_turfs(T))
+		if(AT.density || T.LinkBlockedWithAccess(AT, null))
+			continue
+		adjacent += AT
+	return adjacent

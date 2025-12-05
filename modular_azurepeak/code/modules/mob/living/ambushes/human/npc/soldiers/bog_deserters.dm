@@ -1,5 +1,5 @@
 
-//Azure Peak
+//Azure Peak port
 //After the bogfort fell to undead, the remaining guard who didn't flea turned to bandirty. Wellarmed and trained.
 //These guys use alot of iron stuff with small amounts of steel mixed in, not really one for finetuned balance might be too hard or easy idk. Going off vibes atm
 /datum/outfit/job/roguetown/human/northern/bog_deserters/proc/add_random_deserter_cloak(mob/living/carbon/human/H)
@@ -10,7 +10,7 @@
 		if(2)
 			cloak = /obj/item/clothing/cloak/stabard/dungeon
 		if(3)
-			cloak = /obj/item/clothing/suit/roguetown/armor/longcoat/brown
+			cloak = /obj/item/clothing/suit/roguetown/armor/longcoat
 
 /datum/outfit/job/roguetown/human/northern/bog_deserters/proc/add_random_deserter_weapon(mob/living/carbon/human/H)
 	var/random_deserter_weapon = rand(1,3)
@@ -80,7 +80,7 @@
 		if(1)
 			armor = /obj/item/clothing/suit/roguetown/armor/brigandine/light
 		if(2)
-			armor = /obj/item/clothing/suit/roguetown/armor/plate/cuirass/iron
+			armor = /obj/item/clothing/suit/roguetown/armor/plate/half/iron
 		if(3)
 			armor = /obj/item/clothing/suit/roguetown/armor/plate/scale
 
@@ -95,7 +95,7 @@
 	flee_in_pain = TRUE
 	a_intent = INTENT_HELP
 	d_intent = INTENT_PARRY
-	possible_mmb_intents = list(INTENT_BITE, INTENT_JUMP, INTENT_KICK, INTENT_SPECIAL)
+	possible_mmb_intents = list(INTENT_BITE, INTENT_JUMP, INTENT_KICK)
 	possible_rmb_intents = list(
 		/datum/rmb_intent/feint,\
 		/datum/rmb_intent/aimed,\
@@ -199,16 +199,16 @@
 	H.STASTR = rand(12,14)
 	H.STASPD = 11
 	H.STACON = rand(11,13)
-	H.STAWIL = 13
+	H.STAEND = 13
 	H.STAPER = 11
 	H.STAINT = 10
 	//Chest Gear
 	add_random_deserter_cloak(H)
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson
-	armor = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/iron
+	armor = /obj/item/clothing/suit/roguetown/armor/chainmail/iron
 	//Head Gear
-	neck = /obj/item/clothing/neck/roguetown/coif/heavypadding
-	head = /obj/item/clothing/head/roguetown/helmet/kettle/iron
+	neck = /obj/item/clothing/neck/roguetown/coif/clothcoif
+	head = /obj/item/clothing/head/roguetown/helmet/kettle
 	//wrist Gear
 	gloves = /obj/item/clothing/gloves/roguetown/chain/iron
 	wrists = /obj/item/clothing/wrists/roguetown/bracers/iron
@@ -232,7 +232,7 @@
 	flee_in_pain = TRUE
 	a_intent = INTENT_HELP
 	d_intent = INTENT_PARRY
-	possible_mmb_intents = list(INTENT_BITE, INTENT_JUMP, INTENT_KICK, INTENT_SPECIAL)
+	possible_mmb_intents = list(INTENT_BITE, INTENT_JUMP, INTENT_KICK)
 	possible_rmb_intents = list(
 		/datum/rmb_intent/feint,\
 		/datum/rmb_intent/aimed,\
@@ -287,18 +287,18 @@
 	H.STASTR = rand(12,14)
 	H.STASPD = 11
 	H.STACON = rand(11,13)
-	H.STAWIL = 13
+	H.STAEND = 13
 	H.STAPER = 11
 	H.STAINT = 10
 	//Chest Gear
-	shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/iron
+	shirt =  /obj/item/clothing/suit/roguetown/armor/chainmail/iron
 	add_random_deserter_armor_hard(H)
 	add_random_deserter_cloak(H)
 	//Head Gear
 	neck = /obj/item/clothing/neck/roguetown/chaincoif/full
 	head = /obj/item/clothing/head/roguetown/helmet/heavy/knight/skettle
 	//wrist Gear
-	gloves = /obj/item/clothing/gloves/roguetown/plate/iron
+	gloves = /obj/item/clothing/gloves/roguetown/chain
 	wrists = /obj/item/clothing/wrists/roguetown/bracers/iron
 	//Lower Gear
 	belt = /obj/item/storage/belt/rogue/leather
