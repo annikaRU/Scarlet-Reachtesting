@@ -9,7 +9,7 @@
 	is_subrace = TRUE
 	base_name = "Ogroid"
 	desc = "<b>Ogres</b><br>\
-	You are a migrating ogre from Gronn or another province of the world. Only recently have ogres begun to find their way into this region, and it smells of opportunity and a good meal. From Grenzelhoft to Naledi, all know the value of an ogre, and to fear a hungry one even more...<br>\
+	Creatures born from the labors of Graggar, Ogres are his favorite children in all creation. Massive in appetite and size they are titans of the battlefield. Maneaters who smash all who oppose their strength and take as they please from the world. Native to the windswept steppes of Gronn, they have migrated across the world in search of food and riches, as conquerors and mercenaries. Not all ogres are Graggarites, and many have converted as they are either simple minded enough to convince to convert, or cunning enough to see the benefit of adopting a new faith in a new land..<br>\
 	<span style='color: #6a8cb7;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'><b> +2 STR | +2 CON | | +2 END | -1 SPD</b></span> </br>\
 	<span style='color: #6a8cb7;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'><b> LANGUAGE: Orcish - ,o</b></span> </br>"
 
