@@ -51886,7 +51886,7 @@
 /obj/structure/mineral_door/wood/fancywood{
 	locked = 1;
 	lockid = "manor";
-	name = "Councilor's Chambers"
+	name = "Councillor's Chambers"
 	},
 /turf/open/floor/rogue/cobble,
 /area/rogue/under/town/basement/keep)
