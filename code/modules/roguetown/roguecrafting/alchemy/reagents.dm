@@ -17,7 +17,7 @@
 
 /datum/reagent/medicine/minorhealthpot/on_mob_life(mob/living/carbon/M) // Heals half as much as health potion, but not wounds.
 	var/list/wCount = M.get_wounds()
-	var/blood_restore = M.blood_volume <= BLOOD_VOLUME_BAD ? 2 : 1
+	var/blood_restore = M.blood_volume <= BLOOD_VOLUME_BAD ? 7 : 6
 	if(M.blood_volume < BLOOD_VOLUME_NORMAL)
 		M.blood_volume = min(M.blood_volume + blood_restore, BLOOD_VOLUME_POTION_MAX)
 	if(wCount.len > 0)
@@ -67,7 +67,7 @@
 
 /datum/reagent/medicine/healthpot/on_mob_life(mob/living/carbon/M)
 	var/list/wCount = M.get_wounds()
-	var/blood_restore = M.blood_volume <= BLOOD_VOLUME_BAD ? 3 : 1
+	var/blood_restore = M.blood_volume <= BLOOD_VOLUME_BAD ? 8 : 6
 	if(M.blood_volume < BLOOD_VOLUME_NORMAL)
 		M.blood_volume = min(M.blood_volume + blood_restore, BLOOD_VOLUME_POTION_MAX) //+100 blood per sip, 960 blood per bottle. Still enough to fill up your blood twice over.
 	else
@@ -96,7 +96,7 @@
 
 /datum/reagent/medicine/stronghealth/on_mob_life(mob/living/carbon/M)
 	var/list/wCount = M.get_wounds()
-	var/blood_restore = M.blood_volume <= BLOOD_VOLUME_BAD ? 12 : 6
+	var/blood_restore = M.blood_volume <= BLOOD_VOLUME_BAD ? 15 : 8
 	if(M.blood_volume < BLOOD_VOLUME_NORMAL)
 		M.blood_volume = min(M.blood_volume + blood_restore, BLOOD_VOLUME_POTION_MAX) //+100 blood per sip, 960 blood per bottle. Still enough to fill up your blood twice over.
 	else
