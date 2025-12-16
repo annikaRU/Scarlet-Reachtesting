@@ -63,6 +63,7 @@
 	var/charge_start_time = 0
 	var/charge_start_timeofday = 0
 	var/last_cooldown_warn = 0
+	var/charge_was_blocked_by_cooldown = FALSE
 
 /atom
 	var/blockscharging = FALSE
@@ -71,6 +72,7 @@
 	blockscharging = TRUE
 
 /client/MouseDown(object, location, control, params)
+	charge_was_blocked_by_cooldown = FALSE
 	var/list/modifiers = params2list(params)
 
 	if(mob.incapacitated())
@@ -133,6 +135,7 @@
 	if(mob.oactive)
 		var/cooldown = (mob.active_hand_index == 2) ? mob.next_lmove : mob.next_rmove
 		if(cooldown > world.time)
+			charge_was_blocked_by_cooldown = TRUE
 			return
 		mob.used_intent = mob.o_intent
 		if(mob.used_intent.get_chargetime() && !object.blockscharging && !mob.in_throw_mode)
@@ -144,6 +147,7 @@
 
 /client/proc/handle_middle_click(atom/object, params, list/modifiers)
 	if(mob.next_move > world.time)
+		charge_was_blocked_by_cooldown = TRUE
 		return
 
 	mob.atkswinging = "middle"
@@ -170,6 +174,7 @@
 
 	var/cooldown = (mob.active_hand_index == 1) ? mob.next_lmove : mob.next_rmove
 	if(cooldown > world.time)
+		charge_was_blocked_by_cooldown = TRUE
 		return
 
 	mob.atkswinging = "left"
@@ -250,6 +255,7 @@
 		return
 	var/mob/living/L = mob
 	if(!L.used_intent.can_charge())
+		charge_was_blocked_by_cooldown = TRUE
 		return
 	L.used_intent.prewarning()
 
