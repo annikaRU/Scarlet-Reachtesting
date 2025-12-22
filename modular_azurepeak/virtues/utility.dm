@@ -12,6 +12,14 @@
 	var/obj/item/pouch = new /obj/item/storage/belt/rogue/pouch/coins/virtuepouch(get_turf(recipient))
 	recipient.put_in_hands(pouch, forced = TRUE)
 
+/datum/virtue/utility/noble/handle_traits(mob/living/carbon/human/recipient)
+	..()
+	if(HAS_TRAIT(recipient, TRAIT_PEASANTMILITIA))
+		to_chat(recipient, "Your noble upbringing left you without the experience to truly wield a common man's tools.")
+		REMOVE_TRAIT(recipient, TRAIT_PEASANTMILITIA, JOB_TRAIT)
+		REMOVE_TRAIT(recipient, TRAIT_PEASANTMILITIA, ADVENTURER_TRAIT)
+
+
 /datum/virtue/utility/blueblooded
 	name = "Blueblooded"
 	desc = "I have been raised since birth in the throes of a noble lineage, and bear exceptional beauty and the social standing to show for it - though none of the material benefits."
@@ -27,6 +35,10 @@
 		to_chat(recipient, "Your social grace is cancelled out! You become normal.")
 		REMOVE_TRAIT(recipient, TRAIT_BEAUTIFUL, TRAIT_VIRTUE)
 		REMOVE_TRAIT(recipient, TRAIT_UNSEEMLY, TRAIT_VIRTUE)
+	if(HAS_TRAIT(recipient, TRAIT_PEASANTMILITIA))
+		to_chat(recipient, "Your noble upbringing left you without the experience to truly wield a common man's tools.")
+		REMOVE_TRAIT(recipient, TRAIT_PEASANTMILITIA, JOB_TRAIT)
+		REMOVE_TRAIT(recipient, TRAIT_PEASANTMILITIA, ADVENTURER_TRAIT)
 
 /datum/virtue/utility/socialite
 	name = "Socialite"
@@ -74,6 +86,9 @@
 
 	if(mapswitch == 0)
 		return
+	if(HAS_TRAIT(recipient, TRAIT_OUTLANDER))
+		to_chat(recipient, "You may have originated from another land, but you have lived here long enough and become a true citizen.")
+		REMOVE_TRAIT(recipient, TRAIT_OUTLANDER, JOB_TRAIT)
 	if(recipient.mind?.assigned_role == "Adventurer" || recipient.mind?.assigned_role == "Mercenary" || recipient.mind?.assigned_role == "Court Agent")
 		// Find tavern area for spawning
 		var/area/spawn_area
@@ -112,7 +127,7 @@
 					recipient.forceMove(spawn_loc)
 					to_chat(recipient, span_notice("As a resident of Scarlet Reach, you find yourself in the local tavern."))
 
-/datum/virtue/utility/failed_squire
+/*/datum/virtue/utility/failed_squire
 	name = "Failed Squire"
 	desc = "I was once a squire in training, but failed to achieve knighthood. Though my dreams of glory were dashed, I retained my knowledge of equipment maintenance and repair, including how to polish arms and armor."
 	added_traits = list(TRAIT_SQUIRE_REPAIR)
@@ -124,7 +139,7 @@
 
 /datum/virtue/utility/failed_squire/apply_to_human(mob/living/carbon/human/recipient)
 	to_chat(recipient, span_notice("Though you failed to become a knight, your training in equipment maintenance and repair remains useful."))
-	to_chat(recipient, span_notice("You can retrieve your hammer and polishing tools from a tree, statue, or clock."))
+	to_chat(recipient, span_notice("You can retrieve your hammer and polishing tools from a tree, statue, or clock."))*/
 
 /datum/virtue/utility/linguist
 	name = "Intellectual"
