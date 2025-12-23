@@ -67,7 +67,7 @@
 	var/turf/fallzone = get_turf(target)
 	if(!fallzone)
 		return
-	var/const/damage = 300 //Structural damage the spell does, on average a door is 1100 integrity, and a window is 200
+	var/const/damage = 600 //Structural damage the spell does, on average a door is 1100 integrity, and a window is 200
 	var/const/radius = 1
 	// The visuals are here, the lava is just for visuals and doesn't ACTUALLY damage you! Just looks cool and indicates what is structures will be damaged.
 	for(var/turf/open/visual in view(radius, fallzone))
