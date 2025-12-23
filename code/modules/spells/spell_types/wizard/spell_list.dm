@@ -52,7 +52,6 @@ GLOBAL_LIST_INIT(learnable_spells, (list(/obj/effect/proc_holder/spell/invoked/p
 		/obj/effect/proc_holder/spell/invoked/wither,
 		/obj/effect/proc_holder/spell/invoked/slick_trick,
 		/obj/effect/proc_holder/spell/invoked/slick_trick_small,
-		/obj/effect/proc_holder/spell/self/conjure_armor/dragonhide,
-		/obj/effect/proc_holder/spell/invoked/projectile/fireball/artillery,
+		/obj/effect/proc_holder/spell/invoked/projectile/fireball/artillery
 		)
 ))

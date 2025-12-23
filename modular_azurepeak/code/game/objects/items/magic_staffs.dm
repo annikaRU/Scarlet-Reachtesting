@@ -44,8 +44,6 @@
 	icon_state = "topazstaff"
 	cast_time_reduction = TOPER_CAST_TIME_REDUCTION
 	resistance_flags = FIRE_PROOF //imagine the salt
-	possible_item_intents = list(SPEAR_BASH, /datum/intent/special/magicarc)
-	gripped_intents = list(SPEAR_BASH, /datum/intent/mace/smash/wood, /datum/intent/special/magicarc)
 	sellprice = 34
 
 /obj/item/rogueweapon/woodstaff/amethyst
@@ -55,9 +53,6 @@
 	icon_state = "amethyststaff"
 	cast_time_reduction = TOPER_CAST_TIME_REDUCTION
 	resistance_flags = FIRE_PROOF
-	resistance_flags = FIRE_PROOF
-	possible_item_intents = list(SPEAR_BASH, /datum/intent/special/magicarc)
-	gripped_intents = list(SPEAR_BASH, /datum/intent/mace/smash/wood, /datum/intent/special/magicarc)
 
 /obj/item/rogueweapon/woodstaff/emerald
 	name = "gemerald-focused staff"
@@ -66,16 +61,14 @@
 	icon_state = "emeraldstaff"
 	cast_time_reduction = EMERALD_CAST_TIME_REDUCTION
 	resistance_flags = FIRE_PROOF
-	resistance_flags = FIRE_PROOF
-	possible_item_intents = list(SPEAR_BASH, /datum/intent/special/magicarc)
-	gripped_intents = list(SPEAR_BASH, /datum/intent/mace/smash/wood, /datum/intent/special/magicarc)
 	sellprice = 42
 
 /obj/item/rogueweapon/woodstaff/emerald/blacksteelstaff
 	name = "blacksteel staff"
 	desc = "A fine wood staff that is reinforced with blacksteel rivets commonly wielded by noble magicians in the Grenzelhoftian Empire. Perched atop it is an less efficient though equally beautiful alchemical Dorpel. Perhaps I could enhance it with a better Dorpel?"
 	icon_state = "blacksteelstaff"
-	max_integrity = 300 // Not sure why it has integrity, might be able to be used as a quarterstaff but magical?
+	max_integrity = 300
+	sellprice = 60 // Not sure why it has integrity, might be able to be used as a quarterstaff but magical?
 
 /obj/item/rogueweapon/woodstaff/sapphire
 	name = "saffira-focused staff"
@@ -83,10 +76,6 @@
 	icon = 'modular_azurepeak/icons/obj/items/staffs.dmi'
 	icon_state = "sapphirestaff"
 	cast_time_reduction = SAPPHIRE_CAST_TIME_REDUCTION
-	resistance_flags = FIRE_PROOF
-	resistance_flags = FIRE_PROOF
-	possible_item_intents = list(SPEAR_BASH, /datum/intent/special/magicarc)
-	gripped_intents = list(SPEAR_BASH, /datum/intent/mace/smash/wood, /datum/intent/special/magicarc)
 	sellprice = 56
 
 /obj/item/rogueweapon/woodstaff/quartz
@@ -96,9 +85,6 @@
 	icon_state = "quartzstaff"
 	cast_time_reduction = QUARTZ_CAST_TIME_REDUCTION
 	resistance_flags = FIRE_PROOF
-	resistance_flags = FIRE_PROOF
-	possible_item_intents = list(SPEAR_BASH, /datum/intent/special/magicarc)
-	gripped_intents = list(SPEAR_BASH, /datum/intent/mace/smash/wood, /datum/intent/special/magicarc)
 	sellprice = 88
 
 /obj/item/rogueweapon/woodstaff/ruby
@@ -107,9 +93,6 @@
 	icon = 'modular_azurepeak/icons/obj/items/staffs.dmi'
 	icon_state = "rubystaff"
 	cast_time_reduction = RUBY_CAST_TIME_REDUCTION
-	resistance_flags = FIRE_PROOF
-	possible_item_intents = list(SPEAR_BASH, /datum/intent/special/magicarc)
-	gripped_intents = list(SPEAR_BASH, /datum/intent/mace/smash/wood, /datum/intent/special/magicarc)
 	sellprice = 100
 
 /obj/item/rogueweapon/woodstaff/diamond
@@ -118,16 +101,14 @@
 	icon = 'modular_azurepeak/icons/obj/items/staffs.dmi'
 	icon_state = "diamondstaff"
 	cast_time_reduction = DIAMOND_CAST_TIME_REDUCTION
-	resistance_flags = FIRE_PROOF
-	possible_item_intents = list(SPEAR_BASH, /datum/intent/special/magicarc)
-	gripped_intents = list(SPEAR_BASH, /datum/intent/mace/smash/wood, /datum/intent/special/magicarc)
 	sellprice = 121
 
 /obj/item/rogueweapon/woodstaff/diamond/blacksteelstaff // Upgraded version, more CDR can be crafted by combining a base Blacksteel Staff with a dorpel
 	name = "refined blacksteel staff"
 	desc = "A fine wood staff that is reinforced with blacksteel rivets commonly wielded by noble magicians in the Grenzelhoftian Empire. Perched atop it is a new beautiful Dorpel that shimmers with magical energies"
 	icon_state = "blacksteelstaff"
-	max_integrity = 300 // 
+	max_integrity = 300 //
+	sellprice = 135
 
 /obj/item/rogueweapon/woodstaff/riddle_of_steel
 	name = "\improper Staff of the Riddle-Steel"
@@ -136,10 +117,6 @@
 	icon = 'modular_azurepeak/icons/obj/items/staffs.dmi'
 	icon_state = "riddlestaff"
 	cast_time_reduction = RIDDLE_OF_STEEL_CAST_TIME_REDUCTION
-	resistance_flags = FIRE_PROOF
-	resistance_flags = FIRE_PROOF
-	possible_item_intents = list(SPEAR_BASH, /datum/intent/special/magicarc)
-	gripped_intents = list(SPEAR_BASH, /datum/intent/mace/smash/wood, /datum/intent/special/magicarc)
 	sellprice = 400
 
 /obj/item/rogueweapon/woodstaff/riddle_of_steel/magos

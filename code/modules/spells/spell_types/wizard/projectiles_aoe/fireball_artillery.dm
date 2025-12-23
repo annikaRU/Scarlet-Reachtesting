@@ -41,10 +41,10 @@
 	exp_light = 0
 	exp_flash = 0
 	exp_fire = 1
-	damage = 50 // 10 less damage than actual fireball on direct fire
+	damage = 30
 	damage_type = BURN
 	npc_damage_mult = 2 // HAHAHA
-	accuracy = 40 // Base accuracy is lower for burn projectiles because they bypass armor
+	accuracy = 40
 	nodamage = FALSE
 	flag = "magic"
 	hitsound = 'sound/blank.ogg'
@@ -52,7 +52,7 @@
 
 /obj/projectile/magic/aoe/fireball/rogue/artillery/arc
 	name = "Arced Artillery Fireball"
-	damage = 65 // 5 damage more than actual fireball on arc'd fire hit
+	damage = 20
 	arcshot = TRUE
 
 /obj/projectile/magic/aoe/fireball/rogue/artillery/on_hit(target)
