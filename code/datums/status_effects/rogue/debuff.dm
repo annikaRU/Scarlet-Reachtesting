@@ -6,6 +6,7 @@
 /datum/status_effect/debuff/hungryt1
 	id = "hungryt1"
 	alert_type = /atom/movable/screen/alert/status_effect/debuff/hungryt1
+	effectedstats = list("constitution" = -1)
 	duration = 100
 	needs_processing = FALSE
 
@@ -17,7 +18,7 @@
 /datum/status_effect/debuff/hungryt2
 	id = "hungryt2"
 	alert_type = /atom/movable/screen/alert/status_effect/debuff/hungryt2
-	effectedstats = list("constitution" = -1, "endurance" = -1)
+	effectedstats = list("strength" = -2, "constitution" = -2, "endurance" = -1)
 	duration = 100
 	needs_processing = FALSE
 
@@ -29,35 +30,13 @@
 /datum/status_effect/debuff/hungryt3
 	id = "hungryt3"
 	alert_type = /atom/movable/screen/alert/status_effect/debuff/hungryt3
-	effectedstats = list("strength" = -2, "constitution" = -2, "endurance" = -3)
+	effectedstats = list("strength" = -5, "constitution" = -3, "endurance" = -2)
 	duration = 100
 	needs_processing = FALSE
 
 /atom/movable/screen/alert/status_effect/debuff/hungryt3
 	name = "Hungry"
 	desc = "My body can barely hold it!"
-	icon_state = "hunger3"
-
-/datum/status_effect/debuff/overweight
-	id = "overweight"
-	alert_type = /atom/movable/screen/alert/status_effect/overweight
-	effectedstats = list("speed" = -1, "endurance" = -1)
-	needs_processing = FALSE
-
-/atom/movable/screen/alert/status_effect/overweight
-	name = "Overweight"
-	desc = "My body feels heavy and sluggish."
-	icon_state = "hunger1"
-
-/datum/status_effect/debuff/underweight
-	id = "underweight"
-	alert_type = /atom/movable/screen/alert/status_effect/underweight
-	effectedstats = list("strength" = -1, "constitution" = -1)
-	needs_processing = FALSE
-
-/atom/movable/screen/alert/status_effect/underweight
-	name = "Underweight"
-	desc = "I feel light-headed and weak!"
 	icon_state = "hunger3"
 
 /datum/status_effect/debuff/thirstyt1
@@ -438,41 +417,25 @@
 /datum/status_effect/debuff/revived
 	id = "revived"
 	alert_type = /atom/movable/screen/alert/status_effect/debuff/revived
-	effectedstats = list("intelligence" = -2,"perception" = -2, "fortune" = -2)
+	effectedstats = list("strength" = -1, "perception" = -1, "intelligence" = -1, "endurance" = -1, "constitution" = -1, "speed" = -1, "fortune" = -1)
 	duration = 15 MINUTES		//Should be long enough to stop someone from running back into battle. Plus, this stacks with body-rot debuff. RIP.
 
 /atom/movable/screen/alert/status_effect/debuff/revived
 	name = "Revival Sickness"
-	desc = "You felt lyfe itself course through you, restoring your lux and your essance. You.. live - but your soul aches. It still needs time to recover.."
+	desc = "You felt lyfe itself course through you, restoring your lux and your essance. You.. live - but your body aches. It still needs time to recover.."
 	icon_state = "revived"
-
-/datum/status_effect/debuff/revived/on_apply()
-	. = ..()
-	if(ishuman(owner))
-		var/mob/living/carbon/human/H = owner
-		var/weightloss = H.dna.species.average_weight * 0.6
-		if(H.weight > weightloss)
-			H.weight = weightloss
 
 //For de-rot - your body ROTTED. Harsher penalty for longer, can be fully off-set with a cure-rot potion.
 /datum/status_effect/debuff/rotted
 	id = "rotted_body"
 	alert_type = /atom/movable/screen/alert/status_effect/debuff/rotted
 	effectedstats = list("strength" = -2, "perception" = -2, "intelligence" = -2, "endurance" = -2, "constitution" = -2, "speed" = -2, "fortune" = -2)
-	duration = 15 MINUTES
+	duration = 30 MINUTES	//Back to a temporary 30 min duration. It hurts.
 
 /atom/movable/screen/alert/status_effect/debuff/rotted
 	name = "Body Rot Paralysis"
 	desc = "You came back from death, but everything aches.. you can feel it in your muscles. Even in your nose, you can smell something putrid and foul. You live yet, but at what cost..?"
 	icon_state = "rotted_body"
-
-/datum/status_effect/debuff/rotted/on_apply()
-	. = ..()
-	if(ishuman(owner))
-		var/mob/living/carbon/human/H = owner
-		var/weightloss = H.dna.species.average_weight * 0.5
-		if(H.weight > weightloss)
-			H.weight = weightloss
 
 //Replaces the flat-stat change, this should ONLY apply to zombies who have been dead for some time. Makes them easier to kill.
 /datum/status_effect/debuff/rotted_zombie

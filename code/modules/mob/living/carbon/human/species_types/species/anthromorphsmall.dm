@@ -34,8 +34,6 @@
 	soundpack_m = /datum/voicepack/male/elf
 	soundpack_f = /datum/voicepack/female/elf
 	use_f = TRUE
-	average_height = 2
-	average_weight = 5
 	custom_clothes = TRUE
 	clothes_id = "dwarf"
 	offset_features = list(

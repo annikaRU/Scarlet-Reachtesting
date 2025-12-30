@@ -781,17 +781,6 @@
 		client.screen -= hud_used.hotkeybuttons
 		hud_used.hotkey_ui_hidden = TRUE
 
-/mob/living/carbon/human/verb/relax()
-	set category = "IC"
-	set name = "Relax"
-	if(do_after(src, 100))
-		if(src.has_status_effect(/datum/status_effect/buff/relaxing))
-			to_chat(src, span_info("I'm ready to face the world again."))
-			src.remove_status_effect(/datum/status_effect/buff/relaxing)
-		else
-			to_chat(src, span_info("I relax my body and conserve my energy."))
-			src.apply_status_effect(/datum/status_effect/buff/relaxing)
-
 //Handles advanced class - Simpler this way.
 /datum/hud/proc/set_advclass()
 	var/atom/movable/screen/using

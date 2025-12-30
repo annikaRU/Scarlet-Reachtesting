@@ -46,45 +46,6 @@
 	desc = ""
 	icon_state = "foodbuff"
 
-/datum/status_effect/buff/foodbuff/on_apply()
-	. = ..()
-	if(ishuman(owner))
-		var/mob/living/carbon/human/H = owner
-		H.weight += 0.1
-
-/datum/status_effect/buff/relaxing
-	id = "relaxing"
-	alert_type = /atom/movable/screen/alert/status_effect/buff/relaxing
-	effectedstats = list("strength" = -5)
-	needs_processing = FALSE
-	var/prevfood
-	var/prevwater
-
-/atom/movable/screen/alert/status_effect/buff/relaxing
-	name = "Relaxing"
-	desc = "My body is calm and I'm using less energy."
-	icon_state = "stressg"
-
-/datum/status_effect/buff/relaxing/on_apply()
-	. = ..()
-	if(ishuman(owner))
-		var/mob/living/carbon/human/H = owner
-		prevfood = H.nutrition
-		prevwater = H.hydration
-		H.nutrition = 500
-		H.hydration = 500
-		ADD_TRAIT(owner, TRAIT_NOHUNGER, id)
-		H.add_movespeed_modifier(MOVESPEED_ID_ADMIN_VAREDIT, update=TRUE, priority=100, multiplicative_slowdown=4, movetypes=GROUND)
-
-/datum/status_effect/buff/relaxing/on_remove()
-	. = ..()
-	if(ishuman(owner))
-		var/mob/living/carbon/human/H = owner
-		H.nutrition = prevfood
-		H.hydration = prevwater
-		REMOVE_TRAIT(owner, TRAIT_NOHUNGER, id)
-		H.remove_movespeed_modifier(MOVESPEED_ID_ADMIN_VAREDIT, TRUE)
-
 /datum/status_effect/buff/druqks
 	id = "druqks"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/druqks

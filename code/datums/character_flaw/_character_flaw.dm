@@ -14,8 +14,6 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	"Clingy"=/datum/charflaw/clingy,
 	"Isolationist"=/datum/charflaw/isolationist,
 	"Bad Sight"=/datum/charflaw/badsight,
-	"Underweight"=/datum/charflaw/underweight,
-	"Overweight"=/datum/charflaw/overweight,
 	"Cyclops (R)"=/datum/charflaw/noeyer,
 	"Cyclops (L)"=/datum/charflaw/noeyel,
 	"Wood Arm (R)"=/datum/charflaw/limbloss/arm_r,
@@ -520,22 +518,6 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	H.mob_biotypes |= MOB_UNDEAD
 	ADD_TRAIT(user, TRAIT_HOLLOW_LIFE, TRAIT_GENERIC)
 	ADD_TRAIT(user, TRAIT_SILVER_WEAK, TRAIT_GENERIC)
-
-/datum/charflaw/underweight
-	name = "Underweight"
-	desc = "You didn't eat enough and now you're suffering the consequences."
-
-/datum/charflaw/underweight/apply_post_equipment(mob/user)
-	var/mob/living/carbon/human/H = user
-	H.weight = H.weight * 0.5
-
-/datum/charflaw/overweight
-	name = "Overweight"
-	desc = "You ate too much and now you're suffering the consequences."
-
-/datum/charflaw/overweight/apply_post_equipment(mob/user)
-	var/mob/living/carbon/human/H = user
-	H.weight = H.weight * 1.6
 
 /datum/charflaw/foreigner
 	name = "Foreigner"

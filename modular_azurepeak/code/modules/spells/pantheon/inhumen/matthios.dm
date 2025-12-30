@@ -243,8 +243,6 @@
 
 		if(HAS_TRAIT(target, TRAIT_NOBLE))
 			totalvalue += 101 // We're ALWAYS going to do a medium level smite minimum to nobles.
-		if(target.has_status_effect(/datum/status_effect/debuff/overweight))
-			totalvalue += 501 // MY WRATH FEEDS ON YOUR GLUTTONY
 
 		var/fire_dmg = 0
 		var/oxy_dmg = 0

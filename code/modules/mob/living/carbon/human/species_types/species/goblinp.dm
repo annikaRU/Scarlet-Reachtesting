@@ -27,8 +27,6 @@
 	custom_clothes = TRUE
 	use_f = TRUE
 	disliked_food = NONE
-	average_height = 2
-	average_weight = 5
 	clothes_id = "dwarf"
 	changesource_flags = MIRROR_BADMIN | WABBAJACK | MIRROR_MAGIC | MIRROR_PRIDE | RACE_SWAP | SLIME_EXTRACT
 	organs = list(

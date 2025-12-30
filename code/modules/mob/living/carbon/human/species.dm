@@ -103,13 +103,6 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	var/use_titles = FALSE
 	var/list/race_titles = list()
 
-	var/average_weight = 10
-	var/average_height = 3
-	var/weightover = 13
-	var/weightunder = 8
-	var/weightmin = 5
-	var/metabolize_rate = 0.5
-
 	var/enflamed_icon = "Standing"
 
 	//Breathing!
@@ -514,25 +507,6 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	if(pref_load)
 		pref_load.apply_customizers_to_character(C)
 		pref_load.apply_descriptors(C)
-
-	var/heightmod = 1
-	if(/datum/mob_descriptor/height/tall in C.mob_descriptors)
-		heightmod = 1.1
-	if(/datum/mob_descriptor/height/towering in C.mob_descriptors)
-		heightmod = 1.15
-	if(/datum/mob_descriptor/height/short in C.mob_descriptors)
-		heightmod = 0.9
-	if(/datum/mob_descriptor/height/tiny in C.mob_descriptors)
-		heightmod = 0.85
-	if(C.gender == MALE)
-		average_weight += 1
-		average_height += 0.4
-	C.height = average_height * heightmod
-	var/weightmod = average_weight * heightmod
-	C.weight = weightmod
-	weightover = weightmod * 1.3
-	weightunder = weightmod * 0.8
-	weightmin = weightmod * 0.5
 
 	for(var/language_type in languages)
 		C.grant_language(language_type)
@@ -1079,8 +1053,6 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			H.remove_status_effect(/datum/status_effect/debuff/hungryt1)
 			H.remove_status_effect(/datum/status_effect/debuff/hungryt2)
 			H.remove_status_effect(/datum/status_effect/debuff/hungryt3)
-			if(prob(3))
-				H.weight += 0.2 * metabolize_rate
 		if(NUTRITION_LEVEL_FED to NUTRITION_LEVEL_FAT)
 			H.remove_stress_list(list(/datum/stressevent/peckish,/datum/stressevent/hungry,/datum/stressevent/starving))
 			H.remove_status_effect(/datum/status_effect/debuff/hungryt1)
@@ -1092,18 +1064,12 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			H.apply_status_effect(/datum/status_effect/debuff/hungryt1)
 			H.remove_status_effect(/datum/status_effect/debuff/hungryt2)
 			H.remove_status_effect(/datum/status_effect/debuff/hungryt3)
-			if(prob(3))
-				if(H.weight > weightmin)
-					H.weight -= 0.1 * metabolize_rate
 		if(NUTRITION_LEVEL_STARVING to NUTRITION_LEVEL_HUNGRY)
 			H.add_stress(/datum/stressevent/hungry)
 			H.remove_stress_list(list(/datum/stressevent/stuffed,/datum/stressevent/peckish,/datum/stressevent/starving))
 			H.apply_status_effect(/datum/status_effect/debuff/hungryt2)
 			H.remove_status_effect(/datum/status_effect/debuff/hungryt1)
 			H.remove_status_effect(/datum/status_effect/debuff/hungryt3)
-			if(prob(3))
-				if(H.weight > weightmin)
-					H.weight -= 0.2 * metabolize_rate
 		if(0 to NUTRITION_LEVEL_STARVING)
 			H.add_stress(/datum/stressevent/starving)
 			H.remove_stress_list(list(/datum/stressevent/stuffed,/datum/stressevent/peckish,/datum/stressevent/hungry))
@@ -1112,8 +1078,6 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			H.remove_status_effect(/datum/status_effect/debuff/hungryt2)
 			if(prob(3))
 				playsound(get_turf(H), pick('sound/body/hungry1.ogg','sound/body/hungry2.ogg','sound/body/hungry3.ogg'), 100, TRUE, -1)
-				if(H.weight > weightmin)
-					H.weight -= 0.4 * metabolize_rate
 
 	switch(H.hydration)
 //		if(HYDRATION_LEVEL_WATERLOGGED to INFINITY)
@@ -1144,15 +1108,6 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			H.apply_status_effect(/datum/status_effect/debuff/thirstyt3)
 			H.remove_status_effect(/datum/status_effect/debuff/thirstyt1)
 			H.remove_status_effect(/datum/status_effect/debuff/thirstyt2)
-
-	if(H.weight > weightover)
-		H.apply_status_effect(/datum/status_effect/debuff/overweight)
-	else
-		H.remove_status_effect(/datum/status_effect/debuff/overweight)
-	if(H.weight < weightunder)
-		H.apply_status_effect(/datum/status_effect/debuff/underweight)
-	else
-		H.remove_status_effect(/datum/status_effect/debuff/underweight)
 
 /datum/species/proc/update_health_hud(mob/living/carbon/human/H)
 	return 0

@@ -63,9 +63,6 @@
 	/// Total level of visualy impairing items
 	var/tinttotal = 0
 
-	var/weight = 0
-	var/height = 0
-
 	//Gets filled up in create_bodyparts()
 	var/list/bodyparts = list(/obj/item/bodypart/chest, /obj/item/bodypart/head, /obj/item/bodypart/l_arm, /obj/item/bodypart/r_arm, /obj/item/bodypart/r_leg, /obj/item/bodypart/l_leg)
 

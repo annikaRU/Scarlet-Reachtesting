@@ -42,8 +42,6 @@
 			if(150 to INFINITY)
 				to_chat(user, span_necrosis("The body is devastated by toxicity."))
 
-		to_chat(user, span_warning("Weight: [human_target.weight] st. | Height: [human_target.height] ct."))
-
 		return TRUE
 	revert_cast()
 	return FALSE

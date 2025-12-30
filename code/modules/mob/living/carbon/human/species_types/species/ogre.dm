@@ -27,8 +27,6 @@
 	dam_icon = 'icons/roguetown/mob/bodies/dam/ogre.dmi' //honestly super fucked & needs an entirely new sprite but it'll be fine for now, probably
 	dam_icon_f = 'icons/roguetown/mob/bodies/dam/ogre.dmi' // see above
 	use_m = TRUE
-	average_weight = 30
-	average_height = 4.5
 	soundpack_m = /datum/voicepack/male/warrior
 	soundpack_f = /datum/voicepack/female/dwarf //idfk bruh
 	offset_features = list(OFFSET_ID = list(0,1), OFFSET_GLOVES = list(0,0), OFFSET_WRISTS = list(0,0),\
