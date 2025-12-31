@@ -1027,6 +1027,8 @@
 
 	owner.emote(pick("chuckle", "giggle"))
 
+//baotha stuff end
+
 /datum/status_effect/debuff/hobbled
 	id = "hobbled"
 	alert_type = /atom/movable/screen/alert/status_effect/debuff/hobbled
@@ -1048,7 +1050,6 @@
 	if(iscarbon(owner))
 		var/mob/living/carbon/C = owner
 		C.remove_movespeed_modifier(MOVESPEED_ID_DAMAGE_SLOWDOWN)
-//baotha stuff end
 
 //quest stuff + old silver buff
 

@@ -20,11 +20,11 @@
 	reach = 1
 	swingdelay = 14
 	damfactor = 1.6
-	penfactor = 40
+	penfactor = 50
 	clickcd = CLICK_CD_RESIST
 	effective_range = null
-	effective_range_type = null
-	sharpness_penalty = 4
+	effective_range_type = EFF_RANGE_NONE
+	sharpness_penalty = 3
 
 /datum/intent/spear/thrust/militia
 	penfactor = 30
@@ -311,7 +311,7 @@
 	return .
 
 /obj/item/rogueweapon/spear
-	force = 20
+	force = 22
 	force_wielded = 30
 	possible_item_intents = list(SPEAR_THRUST_1H, SPEAR_CUT_1H) 
 	gripped_intents = list(SPEAR_THRUST, SPEAR_CUT, SPEAR_BASH) //bash is for nonlethal takedowns, only targets limbs
