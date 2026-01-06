@@ -320,7 +320,7 @@
 /datum/status_effect/buff/magearmor/on_apply()
 	. = ..()
 	playsound(owner, 'sound/magic/magearmordown.ogg', 75, FALSE)
-	duration = (7-owner.get_skill_level(/datum/skill/magic/arcane)) MINUTES
+	duration = (30 - (owner.get_skill_level(/datum/skill/magic/arcane) * 2.5)) SECONDS
 
 /datum/status_effect/buff/magearmor/on_remove()
 	. = ..()
@@ -509,6 +509,10 @@
 	return ..()
 
 /datum/status_effect/buff/healing/on_apply()
+	if(owner.construct) //golems can't be healed by miracles cuz they're not living beans
+		owner.visible_message(span_warning("The divine aura enveloping [owner]'s inorganic body sputters and fades away."))
+		qdel(src)
+		return
 	SEND_SIGNAL(owner, COMSIG_LIVING_MIRACLE_HEAL_APPLY, healing_on_tick, src)
 	var/filter = owner.get_filter(MIRACLE_HEALING_FILTER)
 	if (!filter)
@@ -530,15 +534,13 @@
 	var/obj/effect/temp_visual/heal/H = new /obj/effect/temp_visual/heal_rogue(get_turf(owner))
 	H.color = "#FF0000"
 	var/list/wCount = owner.get_wounds()
-	if(owner.construct) //golems can't be healed by miracles cuz they're not living beans
-		owner.visible_message(span_warning("The divine aura enveloping [owner]'s inorganic body sputters and fades away."))
-		qdel(src)
-		return
 	if(owner.blood_volume < BLOOD_VOLUME_NORMAL)
 		owner.blood_volume = min(owner.blood_volume+healing_on_tick, BLOOD_VOLUME_NORMAL)
 	if(wCount.len > 0)
 		owner.heal_wounds(healing_on_tick)
 		owner.update_damage_overlays()
+	if(HAS_TRAIT(owner, TRAIT_SIMPLE_WOUNDS))
+		owner.simple_bleeding = max(0, owner.simple_bleeding-(healing_on_tick/2))
 	owner.adjustBruteLoss(-healing_on_tick, 0)
 	owner.adjustFireLoss(-healing_on_tick, 0)
 	owner.adjustOxyLoss(-healing_on_tick, 0)
@@ -1331,7 +1333,8 @@
 
 /datum/status_effect/buff/clash/on_remove()
 	. = ..()
-	owner.apply_status_effect(/datum/status_effect/debuff/clashcd)
+	var/newcd = 30 SECONDS - owner.get_tempo_bonus(TEMPO_TAG_RCLICK_CD_BONUS)
+	owner.apply_status_effect(/datum/status_effect/debuff/clashcd, newcd)
 	var/newdur = world.time - dur
 	var/mob/living/carbon/human/H = owner
 	if(newdur > (initial(duration) - 0.2 SECONDS))	//Not checking exact duration to account for lag and any other tick / timing inconsistencies.
@@ -1395,6 +1398,16 @@
 	owner.emote("breathgasp", forced = TRUE)
 	owner.Slowdown(3)
 
+/datum/status_effect/buff/motive
+	id = "motive"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/motive
+	effectedstats = list("strength" = 1,"endurance" = 1)
+
+/atom/movable/screen/alert/status_effect/buff/motive
+	name = "Motive"
+	desc = span_bloody("GRAGGAR'S ARMAMENTS CALL ME TO SLAUGHTER!! KILL!! RIP!! CONSUME!!")
+	icon_state = "call_to_slaughter"
+
 /datum/status_effect/buff/psydonic_endurance
 	id = "psydonic_endurance"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/psydonic_endurance
@@ -1426,6 +1439,73 @@
 	name = "sermon"
 	desc = "I feel inspired by the sermon!"
 	icon_state = "buff"
+
+/datum/status_effect/buff/griefflower
+	id = "griefflower"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/griefflower
+
+/datum/status_effect/buff/griefflower/on_apply()
+	. = ..()
+	to_chat(owner, span_notice("The Rosa’s ring draws blood, but it’s the memories that truly wound. Failure after failure surging through you like thorns blooming inward."))
+	ADD_TRAIT(owner, TRAIT_CRACKHEAD, src)
+
+/datum/status_effect/buff/griefflower/on_remove()
+	. = ..()
+	to_chat(owner, span_notice("You part from the Rosa’s touch. The ache retreats..."))
+	REMOVE_TRAIT(owner, TRAIT_CRACKHEAD, src)
+
+/atom/movable/screen/alert/status_effect/buff/griefflower
+	name = "Rosa Ring"
+	desc = "The Rosa's ring draws blood, but it's the memories that truly wound. Failure after failure surging through you like thorns blooming inward."
+	icon_state = "buff"
+
+#define JOYBRINGER_FILTER "joybringer"
+
+/datum/status_effect/joybringer
+	id = "joybringer"
+	var/outline_colour = "#a529e8"
+	duration = -1
+	tick_interval = -1
+	examine_text = span_love("SUBJECTPRONOUN is bathed in Baotha's blessings!")
+	alert_type = null
+
+/datum/status_effect/joybringer/on_apply()
+	. = ..()
+
+	owner.visible_message(span_userdanger("A tide of vibrant purple mist surges from [owner], carrying the heavy scent of sweet intoxication!"))
+
+	var/filter = owner.get_filter(JOYBRINGER_FILTER)
+	if(!filter)
+		owner.add_filter(JOYBRINGER_FILTER, 2, list("type" = "outline", "color" = outline_colour, "alpha" = 60, "size" = 2))
+
+	var/mutable_appearance/effect = mutable_appearance('icons/effects/effects.dmi', "mist", -JOYBRINGER_LAYER, alpha = 128)
+	effect.appearance_flags = RESET_COLOR
+	effect.blend_mode = BLEND_ADD
+	effect.color = "#a529e8"
+
+	owner.overlays_standing[JOYBRINGER_LAYER] = effect
+	owner.apply_overlay(JOYBRINGER_LAYER)
+
+	RegisterSignal(owner, COMSIG_LIVING_LIFE, PROC_REF(on_life))
+
+/datum/status_effect/joybringer/on_remove()
+	. = ..()
+
+	owner.remove_filter(JOYBRINGER_FILTER)
+	owner.remove_overlay(JOYBRINGER_LAYER)
+
+	UnregisterSignal(owner, COMSIG_LIVING_LIFE)
+
+/datum/status_effect/joybringer/proc/on_life()
+	SIGNAL_HANDLER
+
+	for(var/mob/living/mob in get_hearers_in_view(2, owner))
+		if(HAS_TRAIT(mob, TRAIT_CRACKHEAD) || HAS_TRAIT(mob, TRAIT_PSYDONITE))
+			continue
+
+		mob.apply_status_effect(/datum/status_effect/debuff/joybringer_druqks)
+
+#undef JOYBRINGER_FILTER
 
 /datum/status_effect/buff/gazeuponme
 	id = "gazeuponme"
@@ -1528,3 +1608,12 @@
 	alert_type = /atom/movable/screen/alert/status_effect/buff
 	effectedstats = list(STATKEY_SPD = 3, STATKEY_END = 1, STATKEY_CON = 1)
 	status_type = STATUS_EFFECT_REPLACE
+
+/datum/status_effect/buff/merchired
+	id = "merchired"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/merchired
+
+/atom/movable/screen/alert/status_effect/buff/merchired
+	name = "Hired!"
+	desc = "I have an active contract. I must be vigilant and ready at all tymes."
+	icon_state = "buff"

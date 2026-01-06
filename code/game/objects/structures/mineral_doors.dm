@@ -209,7 +209,7 @@
 		to_chat(human, span_notice("They're just where I left them..."))
 	else
 		to_chat(human, span_notice("It's just where I left it..."))
-	name = "[user.name] the [human.advjob ? human.advjob : human.job]'s house"
+	name = "[user.real_name] the [human.advjob ? human.advjob : human.job]'s house"
 	return TRUE
 
 /obj/structure/mineral_door/Move()
@@ -898,6 +898,14 @@
 	desc = ""
 	over_state = "fancy_woodopen"
 	smashable = TRUE
+
+/obj/structure/mineral_door/wood/fancywood/knight
+	locked = TRUE
+	keylock = TRUE
+	grant_resident_key = TRUE
+	resident_key_type = /obj/item/roguekey/knight
+	resident_role = /datum/job/roguetown/knight
+	lockid = null //Will be randomized
 
 /obj/structure/mineral_door/wood/deadbolt
 	desc = "This door comes with a deadbolt."

@@ -179,19 +179,32 @@
 	if(!(mobility_flags & MOBILITY_MOVE))
 		return FALSE
 
+	var/mob/living/H = src
+	var/mob/living/U = user
+
+	// fire mage armor before EVERYTHING (almost) else!
+	// in practice, this means that mage armor will protect us while we're charging spells, but attacks we would've otherwise parried/dodged will eat the armor first
+	// to balance this, mage armor refreshes SIGNIFICANTLY faster (7-arcyne skill MINUTES to 30-arcyne skill SECONDS), and we can use RMB defend intend to funnel energy & stamina to bring it back up again
+	if(HAS_TRAIT(src, TRAIT_MAGEARMOR))
+		if(H.magearmor == 0)
+			H.magearmor = 1
+			H.apply_status_effect(/datum/status_effect/buff/magearmor)
+			to_chat(src, span_boldwarning("My mage armor absorbs the hit and dissipates!"))
+			return TRUE
+	
 	if(client && used_intent)
 		if(client.charging && used_intent.tranged && !used_intent.tshield)
 			return FALSE
 
 	var/prob2defend = user.defprob
-	var/mob/living/H = src
-	var/mob/living/U = user
+
 	if(H && U)
 		prob2defend = 0
 
 	if(!can_see_cone(user))
 		if(d_intent == INTENT_PARRY)
-			return FALSE
+			if(!H.get_tempo_bonus(TEMPO_TAG_NOLOS_PARRY))
+				return FALSE
 		else
 			prob2defend = max(prob2defend-15,0)
 
@@ -207,7 +220,9 @@
 				return FALSE
 			if(pulledby || pulling)
 				return FALSE
-			if(world.time < last_parry + setparrytime)
+			var/parrydelay = setparrytime
+			parrydelay -= get_tempo_bonus(TEMPO_TAG_PARRYCD_BONUS)
+			if(world.time < last_parry + parrydelay)
 				if(!istype(rmb_intent, /datum/rmb_intent/riposte))
 					return FALSE
 			if(has_status_effect(/datum/status_effect/debuff/exposed))
@@ -272,6 +287,10 @@
 			if(U.mind)
 				if(intenty.masteritem)
 					attacker_skill = U.get_skill_level(intenty.masteritem.associated_skill)
+
+					if(intenty.sharpness_penalty)
+						intenty.masteritem.remove_bintegrity(intenty.sharpness_penalty)
+
 					prob2defend -= (attacker_skill * 20)
 					if((intenty.masteritem.wbalance == WBALANCE_SWIFT) && (user.STASPD > src.STASPD)) //enemy weapon is quick, so get a bonus based on spddiff
 						var/spdmod = ((user.STASPD - src.STASPD) * 10)
@@ -353,16 +372,6 @@
 						drained = drained + ( intenty.masteritem.wbalance * ((user.STASTR - src.STASTR) * -5) )
 			else
 				to_chat(src, span_warning("The enemy defeated my parry!"))
-				if(HAS_TRAIT(src, TRAIT_MAGEARMOR))
-					if(H.magearmor == 0)
-						H.magearmor = 1
-						H.apply_status_effect(/datum/status_effect/buff/magearmor)
-						to_chat(src, span_boldwarning("My mage armor absorbs the hit and dissipates!"))
-						return TRUE
-					else
-						return FALSE
-				else
-					return FALSE
 
 			drained = max(drained, 5)
 
@@ -415,6 +424,9 @@
 					var/dam2take = round((get_complex_damage(AB,user,used_weapon.blade_dulling)/2),1)
 					if(dam2take)
 						var/intdam = used_weapon.max_blade_int ? INTEG_PARRY_DECAY : INTEG_PARRY_DECAY_NOSHARP
+						var/tempobonus = H.get_tempo_bonus(TEMPO_TAG_DEF_INTEGFACTOR)
+						if(tempobonus)	//It is either null or 0.1 to 1, multiplication by null results in 0, so we check.
+							intdam *= tempobonus
 						var/sharp_loss = SHARPNESS_ONHIT_DECAY
 						if(used_weapon == offhand)
 							intdam = INTEG_PARRY_DECAY_NOSHARP
@@ -504,17 +516,6 @@
 						flash_fullscreen("blackflash2")
 						user.aftermiss()
 						return TRUE
-					else
-						if(HAS_TRAIT(src, TRAIT_MAGEARMOR))
-							if(H.magearmor == 0)
-								H.magearmor = 1
-								H.apply_status_effect(/datum/status_effect/buff/magearmor)
-								to_chat(src, span_boldwarning("My mage armor absorbs the hit and dissipates!"))
-								return TRUE
-							else
-								return FALSE
-						else
-							return FALSE
 			else
 				return FALSE
 
@@ -545,6 +546,10 @@
 /mob/proc/do_parry(obj/item/W, parrydrain as num, mob/living/user)
 	if(ishuman(src))
 		var/mob/living/carbon/human/H = src
+
+		//Tempo bonus
+		parrydrain -= H.get_tempo_bonus(TEMPO_TAG_STAMLOSS_PARRY)
+
 		if(H.stamina_add(parrydrain))
 			if(W)
 				playsound(get_turf(src), pick(W.parrysound), 100, FALSE)
@@ -718,6 +723,10 @@
 			return FALSE
 		if(!UH?.mind) // For NPC, reduce the drained to 5 stamina
 			drained = drained_npc
+
+		//Tempo bonus
+		drained -= H.get_tempo_bonus(TEMPO_TAG_STAMLOSS_DODGE)
+
 		if(!H.stamina_add(max(drained,5)))
 			to_chat(src, span_warning("I'm too tired to dodge!"))
 			return FALSE
@@ -1078,3 +1087,123 @@
 		finalprob -= rand(1, rand(1,25))
 
 	return prob(finalprob)
+
+
+/mob/living/carbon/human/proc/process_tempo_attack(mob/living/carbon/attacker)
+	if(iscarbon(attacker) && attacker.mind && attacker != src)
+		if(length(tempo_attackers) <= TEMPO_CAP || (attacker in tempo_attackers))	//This list auto-culls so we don't need to flood it. If you're fighting 7 dudes at the same time you've got other problems.
+			var/newtime
+			var/att_count = length(tempo_attackers)
+			switch(att_count)
+				if(0 to TEMPO_ONE)
+					newtime = world.time + TEMPO_DELAY_ONE
+				if(TEMPO_TWO)
+					newtime = world.time + TEMPO_DELAY_TWO
+				if(TEMPO_MAX to TEMPO_CAP)
+					newtime = world.time + TEMPO_DELAY_MAX
+			tempo_attackers[attacker] = newtime
+			next_tempo_cull = world.time + TEMPO_CULL_DELAY	//We reset the autocull timer on a hit from a valid person.
+		manage_tempo()
+
+/mob/living/carbon/human/proc/manage_tempo()
+	var/newcount
+	newcount = length(tempo_attackers)
+	switch(newcount)
+		if(TEMPO_MAX to TEMPO_CAP)
+			apply_status_effect(/datum/status_effect/buff/tempo_three)
+			remove_status_effect(/datum/status_effect/buff/tempo_two)
+			remove_status_effect(/datum/status_effect/buff/tempo_one)
+		if(TEMPO_TWO)
+			apply_status_effect(/datum/status_effect/buff/tempo_two)
+			remove_status_effect(/datum/status_effect/buff/tempo_three)
+			remove_status_effect(/datum/status_effect/buff/tempo_one)
+		if(TEMPO_ONE)
+			apply_status_effect(/datum/status_effect/buff/tempo_one)
+			remove_status_effect(/datum/status_effect/buff/tempo_three)
+			remove_status_effect(/datum/status_effect/buff/tempo_two)
+		if(0 to (TEMPO_ONE - 1))
+			remove_status_effect(/datum/status_effect/buff/tempo_one)
+			remove_status_effect(/datum/status_effect/buff/tempo_two)
+			remove_status_effect(/datum/status_effect/buff/tempo_three)
+
+/mob/living/carbon/human/proc/cull_tempo_list()
+	list_clear_nulls(tempo_attackers)	//I pray this never returns TRUE
+	for(var/mob in tempo_attackers)
+		if(tempo_attackers[mob] < world.time)
+			tempo_attackers.Remove(mob)
+	manage_tempo()
+
+/mob/living/carbon/human/proc/clear_tempo_all()
+	if(length(tempo_attackers) && HAS_TRAIT(src, TRAIT_TEMPO))
+		LAZYCLEARLIST(tempo_attackers)
+		to_chat(src, span_info("My muscles relax. My tempo is gone."))
+		manage_tempo()
+
+/mob/living/proc/get_tempo_bonus(id)
+	switch(id)
+		//Bonus CDR for rclicks
+		if(TEMPO_TAG_RCLICK_CD_BONUS)
+			if(has_status_effect(/datum/status_effect/buff/tempo_one))
+				return 5 SECONDS
+			if(has_status_effect(/datum/status_effect/buff/tempo_two))
+				return 10 SECONDS
+			if(has_status_effect(/datum/status_effect/buff/tempo_three))
+				return 15 SECONDS
+		//Bonus parry CDR. Note that default is 1.2 SECONDS
+		if(TEMPO_TAG_PARRYCD_BONUS)
+			if(has_status_effect(/datum/status_effect/buff/tempo_one))
+				return 0.2 SECONDS
+			if(has_status_effect(/datum/status_effect/buff/tempo_two))
+				return 0.4 SECONDS
+			if(has_status_effect(/datum/status_effect/buff/tempo_three))
+				return 0.6 SECONDS
+		//Modifier for how much integ damage the weapon we parry with takes. Multiplier.
+		if(TEMPO_TAG_DEF_INTEGFACTOR)
+			if(has_status_effect(/datum/status_effect/buff/tempo_one))
+				return 0.75
+			if(has_status_effect(/datum/status_effect/buff/tempo_two))
+				return 0.5
+			if(has_status_effect(/datum/status_effect/buff/tempo_three))
+				return 0.25
+		//Modifier for how much LESS sharpness we lose with the weapon we parry. Flat number.
+		if(TEMPO_TAG_DEF_SHARPNESSFACTOR)
+			if(has_status_effect(/datum/status_effect/buff/tempo_one))
+				return 1
+			if(has_status_effect(/datum/status_effect/buff/tempo_two))
+				return 2
+			if(has_status_effect(/datum/status_effect/buff/tempo_three))
+				return 3	//No default sharpness lost at max Tempo.
+		//Whether we can parry without seeing the enemy
+		if(TEMPO_TAG_NOLOS_PARRY)
+			if(has_status_effect(/datum/status_effect/buff/tempo_one))
+				return FALSE
+			if(has_status_effect(/datum/status_effect/buff/tempo_two))
+				return TRUE
+			if(has_status_effect(/datum/status_effect/buff/tempo_three))
+				return TRUE
+			else
+				return FALSE
+		//How much less armor integ we lose on hit. Multiplier. (0 to 1)
+		if(TEMPO_TAG_ARMOR_INTEGFACTOR)
+			if(has_status_effect(/datum/status_effect/buff/tempo_one))
+				return 0.8
+			if(has_status_effect(/datum/status_effect/buff/tempo_two))
+				return 0.6
+			if(has_status_effect(/datum/status_effect/buff/tempo_three))
+				return 0.4
+		//How much stamloss we take away from dodging. Flat number.
+		if(TEMPO_TAG_STAMLOSS_DODGE)
+			if(has_status_effect(/datum/status_effect/buff/tempo_one))
+				return 2
+			if(has_status_effect(/datum/status_effect/buff/tempo_two))
+				return 4
+			if(has_status_effect(/datum/status_effect/buff/tempo_three))
+				return 6
+		//How much stamloss we take away from parrying. Flat number.
+		if(TEMPO_TAG_STAMLOSS_PARRY)
+			if(has_status_effect(/datum/status_effect/buff/tempo_one))
+				return 1
+			if(has_status_effect(/datum/status_effect/buff/tempo_two))
+				return 2
+			if(has_status_effect(/datum/status_effect/buff/tempo_three))
+				return 3
