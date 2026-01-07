@@ -1504,3 +1504,13 @@
 		user.ignite_mob()
 		user.Stun(40)
 	..()
+
+/obj/item/rogueweapon/spear/holysteel
+	name = "Solar Spear"
+	desc = "Made to pierce the enemies of Astrata like a beam of light. Go forth and bring order."
+	icon_state = "ravspear"
+	smeltresult = /obj/item/ingot/steel
+	force = 15
+	force_wielded = 25
+	max_integrity = 250
+

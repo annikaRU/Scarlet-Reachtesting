@@ -350,6 +350,10 @@
 			weapons += "The Heartstring"
 		if(/datum/patron/divine/abyssor)
 			weapons += "Tidecleaver"
+		if(/datum/patron/divine/ravox)
+			weapons += "Judgement Edge"
+		if(/datum/patron/divine/astrata)
+			weapons += "Solar Spear"
 	var/weapon_choice = input(H,"Choose your weapon.", "TAKE UP ARMS") as anything in weapons
 	switch(weapon_choice)
 		if("Halberd")
@@ -393,6 +397,12 @@
 		if("Duel Settler")
 			H.put_in_hands(new /obj/item/rogueweapon/mace/goden/steel/ravox(H), TRUE)
 			H.adjust_skillrank(/datum/skill/combat/maces, 1, TRUE)
+		if("Judgement Edge")
+			H.put_in_hands(new /obj/item/rogueweapon/sword/holysteel(H), TRUE)
+			H.adjust_skillrank(/datum/skill/combat/swords, 1, TRUE)
+		if("Solar Spear")
+			H.put_in_hands(new /obj/item/rogueweapon/spear/holysteel(H), TRUE)
+			H.adjust_skillrank(/datum/skill/combat/polearms, 1, TRUE)
 		if("The Heartstring")
 			H.put_in_hands(new /obj/item/rogueweapon/sword/rapier/eora(H), TRUE)
 			H.adjust_skillrank(/datum/skill/combat/swords, 1, TRUE)
