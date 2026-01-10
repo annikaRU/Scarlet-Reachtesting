@@ -328,7 +328,7 @@
 
 /datum/outfit/job/templar/crusader/choose_loadout(mob/living/carbon/human/H)
 	. = ..()
-	var/weapons = list("Halberd","Longsword","Flail","Mace","Battle Axe")
+	var/weapons = list("Halberd","Longsword","Flail","Mace","Battle Axe", "Judgement Edge", "Solar Spear")
 	switch(H.patron?.type)
 		if(/datum/patron/divine/astrata) //Unique patron weapons, more can be added here if wanted.
 			weapons += "Solar Judgement"
@@ -350,10 +350,6 @@
 			weapons += "The Heartstring"
 		if(/datum/patron/divine/abyssor)
 			weapons += "Tidecleaver"
-		if(/datum/patron/divine/ravox)
-			weapons += "Judgement Edge"
-		if(/datum/patron/divine/astrata)
-			weapons += "Solar Spear"
 	var/weapon_choice = input(H,"Choose your weapon.", "TAKE UP ARMS") as anything in weapons
 	switch(weapon_choice)
 		if("Halberd")
