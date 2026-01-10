@@ -1,29 +1,30 @@
 
 GLOBAL_LIST_INIT(character_flaws, list(
 	"Alcoholic"=/datum/charflaw/addiction/alcoholic,
-	"Devout Follower"=/datum/charflaw/addiction/godfearing,
+	"Bad Sight"=/datum/charflaw/badsight,
+	"Blind"=/datum/charflaw/blind,
+	"Clingy"=/datum/charflaw/clingy,
 	"Colorblind"=/datum/charflaw/colorblind,
-	"Smoker"=/datum/charflaw/addiction/smoker,
-	"Junkie"=/datum/charflaw/addiction/junkie,
+	"Critical Weakness"=/datum/charflaw/critweakness,
+	"Cyclops (L)"=/datum/charflaw/noeyel,
+	"Cyclops (R)"=/datum/charflaw/noeyer,
+	"Damned"=/datum/charflaw/damned,
+	"Devout Follower"=/datum/charflaw/addiction/godfearing,
+	"Foreigner"=/datum/charflaw/foreigner,
 	"Greedy"=/datum/charflaw/greedy,
+	"Isolationist"=/datum/charflaw/isolationist,
+	"Junkie"=/datum/charflaw/addiction/junkie,
+	"Lawless"=/datum/charflaw/lawless,
+	"Masochist"=/datum/charflaw/masochist,
+	"Mute"=/datum/charflaw/mute,
 	"Narcoleptic"=/datum/charflaw/narcoleptic,
 	"Nymphomaniac"=/datum/charflaw/addiction/lovefiend,
-	"Sadist"=/datum/charflaw/addiction/sadist,
-	"Masochist"=/datum/charflaw/masochist,
 	"Paranoid"=/datum/charflaw/paranoid,
-	"Clingy"=/datum/charflaw/clingy,
-	"Isolationist"=/datum/charflaw/isolationist,
-	"Bad Sight"=/datum/charflaw/badsight,
-	"Cyclops (R)"=/datum/charflaw/noeyer,
-	"Cyclops (L)"=/datum/charflaw/noeyel,
-	"Wood Arm (R)"=/datum/charflaw/limbloss/arm_r,
-	"Wood Arm (L)"=/datum/charflaw/limbloss/arm_l,
+	"Sadist"=/datum/charflaw/addiction/sadist,
 	"Sleepless"=/datum/charflaw/sleepless,
-	"Mute"=/datum/charflaw/mute,
-	"Critical Weakness"=/datum/charflaw/critweakness,
-	"Foreigner"=/datum/charflaw/foreigner,
-	"Damned"=/datum/charflaw/damned,
-	"Lawless"=/datum/charflaw/lawless,
+	"Smoker"=/datum/charflaw/addiction/smoker,
+	"Wood Arm (L)"=/datum/charflaw/limbloss/arm_l,
+	"Wood Arm (R)"=/datum/charflaw/limbloss/arm_r,
 	"Random or No Flaw"=/datum/charflaw/randflaw,
 	"No Flaw (3 TRIUMPHS)"=/datum/charflaw/noflaw,
 	))
@@ -284,6 +285,76 @@ GLOBAL_LIST_INIT(character_flaws, list(
 /datum/charflaw/colorblind/on_mob_creation(mob/user)
 	..()
 	user.add_client_colour(/datum/client_colour/monochrome)
+
+/datum/charflaw/blind
+	name = "Blind"
+	desc = "I am visually impaired, ranging from poor sight to total blindness."
+	var/has_prompted = FALSE
+	var/applied_eye_damage = FALSE
+	var/pending_severity
+	var/apply_attempts = 0
+	var/static/list/severity_choices = list("Mild", "Severe", "Blind")
+
+/datum/charflaw/blind/apply_post_equipment(mob/user)
+	. = ..()
+	if(applied_eye_damage || has_prompted)
+		return
+	if(!ishuman(user))
+		return
+	var/mob/living/carbon/human/H = user
+	if(!H.client)
+		return
+	has_prompted = TRUE
+	var/severity = tgui_input_list(H, "How severe is your blindness?", "Blindness", severity_choices, "Mild")
+	pending_severity = sanitize_inlist(severity, severity_choices, "Mild")
+	if(try_apply_eye_damage(H))
+		applied_eye_damage = TRUE
+		pending_severity = null
+		return
+	addtimer(CALLBACK(src, PROC_REF(retry_apply_eye_damage), WEAKREF(H)), 1 SECONDS)
+	return
+
+/datum/charflaw/blind/proc/retry_apply_eye_damage(datum/weakref/human_ref)
+	if(applied_eye_damage)
+		return
+	if(++apply_attempts > 10)
+		return
+	var/mob/living/carbon/human/H = human_ref?.resolve()
+	if(!H || QDELETED(H))
+		return
+	if(try_apply_eye_damage(H))
+		applied_eye_damage = TRUE
+		pending_severity = null
+		return
+	addtimer(CALLBACK(src, PROC_REF(retry_apply_eye_damage), human_ref), 1 SECONDS)
+
+/datum/charflaw/blind/proc/try_apply_eye_damage(mob/living/carbon/human/H)
+	if(!pending_severity)
+		return FALSE
+	return apply_eye_damage_once(H, pending_severity)
+
+/datum/charflaw/blind/proc/apply_eye_damage_once(mob/living/carbon/human/H, severity)
+	if(!H || QDELETED(H))
+		return FALSE
+	var/obj/item/organ/eyes/eyes = H.getorganslot(ORGAN_SLOT_EYES)
+	if(!eyes)
+		return FALSE
+	eyes.disable_natural_healing = TRUE
+	if(severity == "Blind")
+		eyes.setOrganDamage(eyes.maxHealth)
+		eyes.organ_flags |= ORGAN_FAILING
+		return TRUE
+	if(eyes.organ_flags & ORGAN_FAILING)
+		eyes.organ_flags &= ~ORGAN_FAILING
+		H.cure_blind(EYE_DAMAGE)
+	if(severity == "Severe")
+		var/target_damage = clamp(eyes.maxHealth - 1, 0, eyes.maxHealth - 1)
+		eyes.setOrganDamage(target_damage)
+		return TRUE
+	var/target_damage = clamp(eyes.high_threshold - 1, eyes.low_threshold + 1, eyes.maxHealth - 1)
+	eyes.setOrganDamage(target_damage)
+	return TRUE
+
 
 /datum/charflaw/greedy
 	name = "Greedy"
