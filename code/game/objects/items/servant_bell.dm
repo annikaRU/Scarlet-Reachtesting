@@ -2,7 +2,7 @@
 	name = "service bell"
 	desc = "Summon a servant to you. While ineffective against those who live in death, the latent silver in this bell resonates its chime in the minds of those who serve you."
 	icon = 'icons/roguetown/items/misc.dmi'
-	icon_state = "servantbell"
+	//icon_state = "servantbell"
 	detail_tag = "_detail"
 	slot_flags = ITEM_SLOT_HIP
 	w_class = WEIGHT_CLASS_SMALL
