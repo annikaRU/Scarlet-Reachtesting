@@ -104,7 +104,7 @@
 		/obj/effect/proc_holder/spell/invoked/projectile/fetch::name = /obj/effect/proc_holder/spell/invoked/projectile/fetch,
 		/obj/effect/proc_holder/spell/invoked/aerosolize::name = /obj/effect/proc_holder/spell/invoked/aerosolize,
 		/obj/effect/proc_holder/spell/invoked/blink::name = /obj/effect/proc_holder/spell/invoked/blink,
-		/obj/effect/proc_holder/spell/invoked/projectile/guided_bolt::name = /obj/effect/proc_holder/spell/invoked/projectile/guided_bolt,
+		/obj/effect/proc_holder/spell/invoked/projectile/arcynebolt::name = /obj/effect/proc_holder/spell/invoked/projectile/arcynebolt,
 		/obj/effect/proc_holder/spell/self/conjure_armor/miracle::name = /obj/effect/proc_holder/spell/self/conjure_armor/miracle,
 		/obj/effect/proc_holder/spell/invoked/conjure_weapon/miracle::name = /obj/effect/proc_holder/spell/invoked/conjure_weapon/miracle,
 		/obj/effect/proc_holder/spell/invoked/hawks_eyes::name = /obj/effect/proc_holder/spell/invoked/hawks_eyes,
