@@ -2,8 +2,7 @@
 	name = "Artillery Fireball"
 	desc = "A arc-able fireball that seemingly does far more damage to structures than people. \n\
 	Damage is increased by 100% versus simple-minded creechurs.\n\
-	Can be fired in an arc over an ally's head with a mage's staff or spellbook on arc intent. It will deals an additional 30% damage that way"
-	clothes_req = FALSE
+	Can be fired in an arc over an ally's head with a mage's staff or spellbook on arc intent, it will deal 33% less damage that way."
 	cost = 6
 	range = 8
 	projectile_type = /obj/projectile/magic/aoe/fireball/rogue/artillery
